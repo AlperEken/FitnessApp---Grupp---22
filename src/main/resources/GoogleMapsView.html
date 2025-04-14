@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Karta - FitnessApp1</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <script>
+        let map;
+        let marker;
+
+        function initMap() {
+            // Standard position (Malmö)
+            const malmo = { lat: 55.604981, lng: 13.003822 };
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: malmo,
+                zoom: 14,
+                mapTypeId: 'roadmap' // Vägkarta, men kan vara 'hybrid' för satellit
+            });
+
+            // Markör på standardpositionen
+            marker = new google.maps.Marker({
+                position: malmo,
+                map: map,
+                title: "Din plats"
+            });
+        }
+
+        // Funktionen som kallas från Java för att markera platsen på kartan
+        function markeraPlats(lat, lon) {
+            const position = { lat: lat, lng: lon };
+            marker.setPosition(position);
+            map.setCenter(position);
+        }
+    </script>
+</head>
+<body>
+<div id="map"></div>
+
+<!-- Ladda Google Maps API och initiera kartan -->
+<script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDtGGwGqr5li-Dtews0_eqkaTxG0cR6OJc&callback=initMap">
+</script>
+</body>
+</html>
