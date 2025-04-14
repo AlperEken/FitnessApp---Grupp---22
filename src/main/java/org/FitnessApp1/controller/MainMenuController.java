@@ -6,7 +6,6 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.FitnessApp1.view.MainMenuScreen;
 import org.FitnessApp1.view.EditProfileScreen;
-import org.FitnessApp1.model.KontoDAO;
 import org.FitnessApp1.model.Konto;
 import org.FitnessApp1.model.SessionManager;
 import org.FitnessApp1.view.KaloriLoggScreen;
