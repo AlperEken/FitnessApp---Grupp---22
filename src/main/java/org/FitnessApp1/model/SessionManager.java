@@ -1,0 +1,21 @@
+package org.FitnessApp1.model;
+
+public class SessionManager {
+
+    private static int aktivtKontoID = -1;  // Lagrar konto-ID för den aktiva användaren
+
+    // Hämta aktivt konto-ID
+    public static int getAktivtKontoID() {
+        return aktivtKontoID;
+    }
+
+    // Sätt aktivt konto-ID
+    public static void setAktivtKontoID(int kontoID) {
+        aktivtKontoID = kontoID;
+    }
+
+    // Rensa aktivt konto-ID (logga ut användaren)
+    public static void clearAktivtKontoID() {
+        aktivtKontoID = -1; // Återställ till en ogiltig ID, vilket innebär att ingen är inloggad
+    }
+}
