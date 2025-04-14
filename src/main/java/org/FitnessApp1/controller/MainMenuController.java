@@ -9,6 +9,7 @@ import org.FitnessApp1.view.EditProfileScreen;
 import org.FitnessApp1.model.Konto;
 import org.FitnessApp1.model.SessionManager;
 import org.FitnessApp1.view.KaloriLoggScreen;
+import org.FitnessApp1.model.KontoDAO;
 
 public class MainMenuController {
 
@@ -71,7 +72,7 @@ public class MainMenuController {
 
             // Hämta konto från KontoDAO
             KontoDAO kontoDAO = new KontoDAO();
-            Konto konto = kontoDAO.hämtaKontoByID(kontoID);
+            Konto konto = kontoDAO.getAccountByID(kontoID);
 
             if (konto != null) {
 
