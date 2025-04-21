@@ -15,7 +15,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import org.FitnessApp1.view.RegisterScreen;
 
-
 public class Main extends Application {
 
     @Override
@@ -53,6 +52,7 @@ public class Main extends Application {
                         MainMenuScreen mainMenuScreen = new MainMenuScreen(namn);
                         new MainMenuController(mainMenuScreen);
 
+                        // Skapa och sätt scenen för huvudmenyn
                         Scene mainMenuScene = new Scene(mainMenuScreen.getRoot(), 800, 600);
                         primaryStage.setScene(mainMenuScene);
                     } else {
@@ -61,6 +61,11 @@ public class Main extends Application {
                 } else {
                     // Felaktiga inloggningsuppgifter
                     System.out.println("Felaktig e-post eller lösenord");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Inloggningsfel");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Felaktig e-post eller lösenord.");
+                    alert.showAndWait();
                 }
             });
 
@@ -76,7 +81,7 @@ public class Main extends Application {
         });
     }
 
-    // Metod för att visa registreringsskärm
+    // Metod för att visa registreringsskärm och gå direkt till MainMenuScreen
     private void VisaRegistreringsskärm(Stage primaryStage) {
         RegisterScreen registerScreen = new RegisterScreen();
 
@@ -100,6 +105,22 @@ public class Main extends Application {
             alert.setHeaderText(null);
             alert.setContentText(registrerad ? "Kontot har skapats!" : "Kunde inte skapa konto.");
             alert.showAndWait();
+
+            if (registrerad) {
+                // Direkt logga in efter registrering
+                int kontoID = kontoDAO.getAcoountIDByEmail(epost);
+                SessionManager.setAktivtKontoID(kontoID);  // Logga in användaren
+                System.out.println("Användaren har loggats in, kontoID: " + kontoID); // Logga konto-ID
+
+                // Skapa huvudmenyn direkt efter registreringen
+                MainMenuScreen mainMenuScreen = new MainMenuScreen(namn);
+                new MainMenuController(mainMenuScreen);
+
+                // Skapa och sätt scenen för huvudmenyn
+                Scene mainMenuScene = new Scene(mainMenuScreen.getRoot(), 800, 600);
+                primaryStage.setScene(mainMenuScene);
+                primaryStage.show();
+            }
         });
 
         // Visa registreringsskärm

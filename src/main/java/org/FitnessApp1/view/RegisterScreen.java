@@ -2,8 +2,12 @@ package org.FitnessApp1.view;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.FitnessApp1.model.Konto;
+import org.FitnessApp1.model.KontoDAO;
 
 public class RegisterScreen {
 
@@ -17,6 +21,7 @@ public class RegisterScreen {
     private TextField genderField;
     private TextField goalField;
     private Button registerButton;
+    private Stage stage;
 
     public RegisterScreen() {
         layout = new VBox(10);
@@ -43,10 +48,76 @@ public class RegisterScreen {
                 new Label("Dagligt mål (kalorier):"), goalField,
                 registerButton
         );
+
+        // När användaren trycker på register knappen
+        registerButton.setOnAction(event -> {
+            try {
+                String name = nameField.getText();
+                String lastname = lastnameField.getText();
+                String email = emailField.getText();
+                String password = passwordField.getText();
+                int age = Integer.parseInt(ageField.getText());
+                double weight = Double.parseDouble(weightField.getText());
+                String gender = genderField.getText();
+                int goal = Integer.parseInt(goalField.getText());
+
+                // Skapa konto objekt
+                Konto konto = new Konto(name, lastname, email, password, age, weight, gender, goal);
+
+                // Spara kontot i databasen via DAO
+                KontoDAO kontoDAO = new KontoDAO();
+                boolean isCreated = kontoDAO.registeraccount(konto);
+
+                if (isCreated) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Registrering");
+                    alert.setContentText("Ditt konto har skapats!");
+                    alert.showAndWait();
+
+                    // Stäng detta fönster
+                    closeRegisterWindow();
+
+                    // Öppna login screen
+                    openLoginScreen();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Fel");
+                    alert.setContentText("Kunde inte skapa kontot. Försök igen.");
+                    alert.showAndWait();
+                }
+
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Fel");
+                alert.setContentText("Fyll i alla fält korrekt.");
+                alert.showAndWait();
+            }
+        });
+    }
+
+    // Öppna login screen
+    private void openLoginScreen() {
+        LoginScreen loginScreen = new LoginScreen(); // Se till att skapa LoginScreen om den inte finns
+        Stage loginStage = new Stage();
+        loginStage.setTitle("Logga in");
+        loginStage.setScene(new Scene(loginScreen.getRoot(), 300, 200)); // Justera storlek
+        loginStage.show();
+    }
+
+    // Stäng registreringsfönstret
+    private void closeRegisterWindow() {
+        if (stage != null) {
+            stage.close();
+        }
     }
 
     public Parent getRoot() {
         return layout;
+    }
+
+    // Metod för att sätta stage för fönstret (för att stänga det senare)
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     // Getters
