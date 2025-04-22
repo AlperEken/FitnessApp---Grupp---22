@@ -13,21 +13,25 @@ public class MainMenuScreen {
     private Button calorieLogButton;
     private Button statisticsButton;
     private Button loggaUtButton;
-    private Button editProfileButton; //  För redigering av konto
+    private Button editProfileButton;
+    private Text title;
+    private String username; // Sparar användarnamnet
 
     public MainMenuScreen(String username) {
+        this.username = username;
+
         layout = new VBox(15);
         layout.setPadding(new Insets(20));
         layout.setStyle("-fx-alignment: center;");
 
-        Text title = new Text("Välkommen, " + username + " till FitnessApp!");
+        title = new Text("Välkommen, " + username + " till FitnessApp!");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
-        findGymsButton = new Button("🗺️ Hitta utegym i Malmö");
+        findGymsButton = new Button("🗺 Hitta utegym i Malmö");
         calorieLogButton = new Button("🍔 Logga kalorier");
         statisticsButton = new Button("📊 Visa statistik");
         loggaUtButton = new Button("🚪 Logga ut");
-        editProfileButton = new Button("✏️ Redigera konto"); // 🆕
+        editProfileButton = new Button("✏️ Redigera konto");
 
         findGymsButton.setPrefWidth(250);
         calorieLogButton.setPrefWidth(250);
@@ -49,6 +53,16 @@ public class MainMenuScreen {
         return layout;
     }
 
+    // Extra: metod för att uppdatera texten med användarnamn
+    public void setUsername(String username) {
+        this.username = username;
+        title.setText("Välkommen, " + username + " till FitnessApp!");
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     public Button getFindGymsButton() {
         return findGymsButton;
     }
@@ -68,5 +82,4 @@ public class MainMenuScreen {
     public Button getEditProfileButton() {
         return editProfileButton;
     }
-
 }

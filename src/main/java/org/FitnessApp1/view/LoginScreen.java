@@ -19,6 +19,7 @@ public class LoginScreen {
         buildUI();
     }
 
+
     private void buildUI() {
         layout = new VBox(15);
         layout.setPadding(new Insets(30));

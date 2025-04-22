@@ -81,6 +81,36 @@ public class KaloriLoggDAO {
         return total;
     }
 
+    // Hämta loggar för ett specifikt datumintervall (t.ex. hela månaden eller valfri period)
+    public List<KaloriLogg> getLogsForDateRange(LocalDate startDate, LocalDate endDate, int kontoID) {
+        List<KaloriLogg> loggar = new ArrayList<>();
+        String sql = "SELECT loggID, datum, calorier, beskrivning FROM kalorier WHERE datum BETWEEN ? AND ? AND kontoID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(startDate));
+            stmt.setDate(2, Date.valueOf(endDate));
+            stmt.setInt(3, kontoID);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int loggID = rs.getInt("loggID");
+                int kalorier = rs.getInt("calorier");
+                String beskrivning = rs.getString("beskrivning");
+
+                KaloriLogg logg = new KaloriLogg(loggID, rs.getDate("datum").toLocalDate(), beskrivning, kalorier, kontoID);
+                loggar.add(logg);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(" Kunde inte hämta loggar för datumintervall: " + e.getMessage());
+        }
+
+        return loggar;
+    }
+
     // Uppdatera befintlig logg
     public boolean updateLogs(KaloriLogg logg) {
         String sql = "UPDATE kalorier SET datum = ?, calorier = ?, beskrivning = ? WHERE loggID = ?";
