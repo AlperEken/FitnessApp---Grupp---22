@@ -3,15 +3,14 @@ package org.FitnessApp1;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.FitnessApp1.controller.MainMenuController;
 import org.FitnessApp1.view.StartScreen;
 import org.FitnessApp1.view.LoginScreen;
-import org.FitnessApp1.controller.MainMenuController;
 import org.FitnessApp1.view.MainMenuScreen;
 import org.FitnessApp1.model.KontoDAO;
 import org.FitnessApp1.model.Konto;
 import org.FitnessApp1.model.SessionManager;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import org.FitnessApp1.view.RegisterScreen;
 
 public class Main extends Application {
