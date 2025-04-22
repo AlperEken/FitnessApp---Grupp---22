@@ -16,7 +16,7 @@ import org.FitnessApp1.view.RegisterScreen;
 
 public class Main extends Application {
 
-    @Override
+    @Override //Test
     public void start(Stage primaryStage) {
         StartScreen startScreen = new StartScreen();
         Scene scene = new Scene(startScreen.getRoot(), 500, 400);
