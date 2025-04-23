@@ -4,6 +4,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.FitnessApp1.model.KontoDAO;
+import org.FitnessApp1.view.KalenderScreen;
 import org.FitnessApp1.view.MainMenuScreen;
 import org.FitnessApp1.view.EditProfileScreen;
 import org.FitnessApp1.model.Konto;
@@ -27,7 +29,6 @@ public class MainMenuController {
             mapsController.showGym();
         });
 
-        // 🍔 Logga kalorier (placeholder)
         // 🍔 Logga kalorier
         view.getCalorieLogButton().setOnAction(e -> {
             KaloriLoggScreen kaloriLoggScreen = new KaloriLoggScreen();
@@ -38,8 +39,7 @@ public class MainMenuController {
             stage.show();
         });
 
-
-        // 📊 Visa statistik (placeholder)
+        // 📊 Visa statistik
         view.getStatisticsButton().setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Statistik");
@@ -50,15 +50,13 @@ public class MainMenuController {
 
         // 🚪 Logga ut
         view.getLoggaUtButton().setOnAction(e -> {
-            // Bekräftelse för att logga ut
             Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
             confirmAlert.setTitle("Logga ut");
             confirmAlert.setHeaderText(null);
             confirmAlert.setContentText("Vill du logga ut?");
             confirmAlert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    SessionManager.clearAktivtKontoID(); // Loggar ut användaren
-                    // Här kan du lägga till logik för att visa startskärmen igen eller inloggningsskärmen
+                    SessionManager.clearAktivtKontoID();
                     System.out.println("Användare har loggats ut.");
                 }
             });
@@ -66,24 +64,24 @@ public class MainMenuController {
 
         // ✏️ Redigera konto
         view.getEditProfileButton().setOnAction(e -> {
-            // Hämta konto-ID från SessionManager
             int kontoID = SessionManager.getAktivtKontoID();
-
-            // Hämta konto från KontoDAO
             KontoDAO kontoDAO = new KontoDAO();
             Konto konto = kontoDAO.hämtaKontoByID(kontoID);
 
             if (konto != null) {
-
-                // Skapa EditProfileScreen och skicka konto-objektet till konstruktorn
                 EditProfileScreen editProfileScreen = new EditProfileScreen(konto);
-
-                // Visa EditProfileScreen-fönstret
                 editProfileScreen.visaFönster();
             } else {
-                // Hantera fallet där konto inte hittades
                 System.out.println("Konto hittades inte.");
             }
         });
+
+        // 📅 Öppna kalender
+        view.getCalendarButton().setOnAction(e -> {
+            KalenderScreen kalenderScreen = new KalenderScreen();
+            kalenderScreen.visaFönster();
+        });
     }
+
+
 }

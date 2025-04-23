@@ -7,7 +7,7 @@ import java.sql.*;
 public class KontoDAO {
 
     // Hämta konto baserat på kontoID
-    public Konto getAccountByID(int kontoID) {
+    public Konto hämtaKontoByID(int kontoID) {
         String sql = "SELECT * FROM konto WHERE kontoID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
