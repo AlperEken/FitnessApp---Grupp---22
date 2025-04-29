@@ -16,6 +16,7 @@ public class MainMenuScreen {
     private Button editProfileButton;
     private Text title;
     private String username; // Sparar användarnamnet
+    private Button kalenderButton;
 
     public MainMenuScreen(String username) {
         this.username = username;
@@ -32,12 +33,13 @@ public class MainMenuScreen {
         statisticsButton = new Button("📊 Visa statistik");
         loggaUtButton = new Button("🚪 Logga ut");
         editProfileButton = new Button("✏️ Redigera konto");
-
+        kalenderButton = new Button("Kalender");
         findGymsButton.setPrefWidth(250);
         calorieLogButton.setPrefWidth(250);
         statisticsButton.setPrefWidth(250);
         loggaUtButton.setPrefWidth(250);
         editProfileButton.setPrefWidth(250);
+        kalenderButton.setPrefWidth(250);
 
         layout.getChildren().addAll(
                 title,
@@ -45,7 +47,8 @@ public class MainMenuScreen {
                 calorieLogButton,
                 statisticsButton,
                 loggaUtButton,
-                editProfileButton
+                editProfileButton,
+                kalenderButton
         );
     }
 
@@ -81,5 +84,10 @@ public class MainMenuScreen {
 
     public Button getEditProfileButton() {
         return editProfileButton;
+    }
+
+    public Button getKalenderButton()
+    {
+        return kalenderButton;
     }
 }
