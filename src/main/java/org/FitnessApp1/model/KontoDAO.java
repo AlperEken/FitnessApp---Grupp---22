@@ -17,6 +17,8 @@ public class KontoDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                // Hämta ALLA fält inklusive kontoID
+                int id = rs.getInt("kontoID");
                 String namn = rs.getString("namn");
                 String efternamn = rs.getString("efternamn");
                 String epost = rs.getString("epost");
@@ -26,16 +28,16 @@ public class KontoDAO {
                 String kön = rs.getString("kön");
                 int dagligtMal = rs.getInt("dagligtMål");
 
-                // Skapa och returnera Konto-objekt
-                return new Konto(namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMal);
+                return new Konto(id, namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMal);
             }
 
         } catch (SQLException e) {
             System.err.println("Fel vid hämtning av konto: " + e.getMessage());
         }
 
-        return null; // Returnera null om inget konto hittas
+        return null;
     }
+
 
     // Hämta namn baserat på e-post
     public String getNameByEmail(String email) {
@@ -101,6 +103,8 @@ public class KontoDAO {
         return false; // Om inget konto hittas eller lösenordet inte stämmer
     }
 
+
+
     // Registrera ett nytt konto
     public boolean registeraccount(Konto konto) {
         String sql = "INSERT INTO konto (namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMål) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -139,21 +143,22 @@ public class KontoDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            // Hasha lösenordet innan det sparas
-            String hashedPassword = BCrypt.hashpw(konto.getLösenord(), BCrypt.gensalt());
+            String lösenord = konto.getLösenord();
+            // Hasha endast om lösenordet INTE är hashat redan
+            if (!lösenord.startsWith("$2a$") && !lösenord.startsWith("$2b$")) {
+                lösenord = BCrypt.hashpw(lösenord, BCrypt.gensalt());
+            }
 
-            // Sätt parametrar
             stmt.setString(1, konto.getNamn());
             stmt.setString(2, konto.getEfternamn());
             stmt.setString(3, konto.getEpost());
-            stmt.setString(4, hashedPassword);
+            stmt.setString(4, lösenord);
             stmt.setInt(5, konto.getÅlder());
             stmt.setDouble(6, konto.getVikt());
             stmt.setString(7, konto.getKön());
             stmt.setInt(8, konto.getDagligtMal());
             stmt.setInt(9, konto.getKontoID());
 
-            // Utför uppdateringen
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
 
@@ -161,6 +166,24 @@ public class KontoDAO {
             System.err.println(" Fel vid uppdatering av konto: " + e.getMessage());
         }
 
-        return false; // Om något gick fel
+        return false;
     }
+
+    public boolean raderaKonto(int kontoID) {
+        String sql = "DELETE FROM konto WHERE kontoID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, kontoID);
+            int affected = stmt.executeUpdate();
+            return affected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Fel vid radering av konto: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 }

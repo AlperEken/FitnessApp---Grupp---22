@@ -11,11 +11,26 @@ public class Konto {
     private String kön;
     private int dagligtMal;
 
-    public Konto() {
-    }
+    // Tom konstruktor
+    public Konto() {}
 
+    // Konstruktor för nyregistrering (utan ID)
     public Konto(String namn, String efternamn, String epost, String lösenord,
                  int ålder, double vikt, String kön, int dagligtMal) {
+        this.namn = namn;
+        this.efternamn = efternamn;
+        this.epost = epost;
+        this.lösenord = lösenord;
+        this.ålder = ålder;
+        this.vikt = vikt;
+        this.kön = kön;
+        this.dagligtMal = dagligtMal;
+    }
+
+    // Fullständig konstruktor inkl. kontoID
+    public Konto(int kontoID, String namn, String efternamn, String epost, String lösenord,
+                 int ålder, double vikt, String kön, int dagligtMal) {
+        this.kontoID = kontoID;
         this.namn = namn;
         this.efternamn = efternamn;
         this.epost = epost;
