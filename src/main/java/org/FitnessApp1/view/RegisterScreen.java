@@ -5,6 +5,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+
 import javafx.stage.Stage;
 import org.FitnessApp1.model.Konto;
 import org.FitnessApp1.model.KontoDAO;
@@ -12,6 +14,7 @@ import org.FitnessApp1.model.KontoDAO;
 public class RegisterScreen {
 
     private VBox layout;
+    private ScrollPane scrollPane;
     private TextField nameField;
     private TextField lastnameField;
     private TextField emailField;
@@ -25,7 +28,7 @@ public class RegisterScreen {
 
     public RegisterScreen() {
         layout = new VBox(10);
-        layout.setPadding(new Insets(20));
+        layout.setPadding(new Insets(30));
 
         nameField = new TextField();
         lastnameField = new TextField();
@@ -48,6 +51,9 @@ public class RegisterScreen {
                 new Label("Dagligt mål (kalorier):"), goalField,
                 registerButton
         );
+
+        scrollPane = new ScrollPane(layout);
+        scrollPane.setFitToWidth(true);
 
         // När användaren trycker på register knappen
         registerButton.setOnAction(event -> {
@@ -112,7 +118,7 @@ public class RegisterScreen {
     }
 
     public Parent getRoot() {
-        return layout;
+        return scrollPane;
     }
 
     // Metod för att sätta stage för fönstret (för att stänga det senare)
