@@ -49,8 +49,6 @@ public class MainMenuController {
                 if (response == ButtonType.OK) {
                     SessionManager.clearAktivtKontoID();
                     System.out.println("Användare har loggats ut.");
-
-                    // Anropa metod från Main för att visa StartScreen med rätt logik
                     Main.visaStartScreen(primaryStage);
                 }
             });
@@ -67,6 +65,11 @@ public class MainMenuController {
             } else {
                 System.out.println("Konto hittades inte.");
             }
+        });
+
+        view.getKalenderButton().setOnAction(e -> {
+            KalenderScreen kalenderScreen = new KalenderScreen();
+            kalenderScreen.visaFönster();
         });
     }
 }
