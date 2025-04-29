@@ -2,15 +2,20 @@ package org.FitnessApp1.view;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
-import javafx.scene.text.Text;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.FitnessApp1.model.KaloriLogg;
 import org.FitnessApp1.model.KaloriLoggDAO;
+import org.FitnessApp1.model.Konto;
+import org.FitnessApp1.model.KontoDAO;
 import org.FitnessApp1.model.SessionManager;
+
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KaloriLoggScreen {
 
@@ -21,9 +26,10 @@ public class KaloriLoggScreen {
     private Button sparaButton;
     private Text dagensSummaText;
     private ListView<String> loggLista;
-    private ProgressBar kaloriProgressBar;  // ProgressBar för kalorimål
-    private Text procentText;  // För att visa procenten av målet
-    private HBox kaloriProgressBox; // Lägg till HBox för att placera procent bredvid linjen
+    private ProgressBar kaloriProgressBar;
+    private Text procentText;
+    private HBox kaloriProgressBox;
+    private Map<String, Integer> loggTextTillID = new HashMap<>();
 
     public KaloriLoggScreen() {
         layout = new VBox(10);
@@ -35,24 +41,19 @@ public class KaloriLoggScreen {
         sparaButton = new Button("Spara intag");
         dagensSummaText = new Text();
         loggLista = new ListView<>();
-        kaloriProgressBar = new ProgressBar(0);  // Startvärde för ProgressBar
-        procentText = new Text();  // Text för att visa procent
-        kaloriProgressBox = new HBox(10); // Lägg till en HBox för att hålla ProgressBar och Procent
+        kaloriProgressBar = new ProgressBar(0);
+        procentText = new Text();
+        kaloriProgressBox = new HBox(10);
 
-        // Visa dagens totala kalorier och lista med måltider
         uppdateraDagensSumma();
         uppdateraLoggLista();
 
-        // Högerklicksmeny för redigering och borttagning
         ContextMenu contextMenu = new ContextMenu();
         MenuItem redigeraItem = new MenuItem("Redigera");
         MenuItem taBortItem = new MenuItem("Ta bort");
         contextMenu.getItems().addAll(redigeraItem, taBortItem);
-
-        // Högerklicka för att redigera eller ta bort logg
         loggLista.setContextMenu(contextMenu);
 
-        // Redigera logg
         redigeraItem.setOnAction(event -> {
             String selectedLogg = loggLista.getSelectionModel().getSelectedItem();
             if (selectedLogg != null) {
@@ -60,7 +61,6 @@ public class KaloriLoggScreen {
                 String beskrivning = delar[0];
                 int kalorier = Integer.parseInt(delar[1].replace(" kcal)", "").trim());
 
-                // Öppna en dialog för att redigera
                 TextInputDialog dialog = new TextInputDialog(beskrivning + ";" + kalorier);
                 dialog.setTitle("Redigera logg");
                 dialog.setHeaderText("Redigera beskrivning och kalorier (separera med semikolon)");
@@ -72,14 +72,13 @@ public class KaloriLoggScreen {
                         String newDescription = newValues[0].trim();
                         int newCalories = Integer.parseInt(newValues[1].trim());
 
-                        // Uppdatera loggen
-                        KaloriLoggDAO dao = new KaloriLoggDAO();
                         int kontoID = SessionManager.getAktivtKontoID();
-                        KaloriLogg logg = new KaloriLogg(LocalDate.now(), newDescription, newCalories, kontoID);
-                        dao.updateLogs(logg);
+                        int loggID = loggTextTillID.get(selectedLogg);
+                        KaloriLogg logg = new KaloriLogg(loggID, datumPicker.getValue(), newDescription, newCalories, kontoID);
+                        new KaloriLoggDAO().updateLogs(logg);
 
-                        uppdateraLoggLista();  // Uppdatera listan efter ändring
-                        uppdateraDagensSumma();  // Uppdatera kalorimål
+                        uppdateraLoggLista();
+                        uppdateraDagensSumma();
                     } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setContentText("Felaktigt format. Använd semikolon för att separera beskrivning och kalorier.");
@@ -89,7 +88,6 @@ public class KaloriLoggScreen {
             }
         });
 
-        // Ta bort logg
         taBortItem.setOnAction(event -> {
             String selectedLogg = loggLista.getSelectionModel().getSelectedItem();
             if (selectedLogg != null) {
@@ -98,31 +96,14 @@ public class KaloriLoggScreen {
                 confirmAlert.setContentText("Vill du verkligen ta bort denna logg?");
                 confirmAlert.showAndWait().ifPresent(response -> {
                     if (response == ButtonType.OK) {
-                        // Ta bort loggen
-                        KaloriLoggDAO dao = new KaloriLoggDAO();
-                        int loggID = Integer.parseInt(selectedLogg.split(" \\(")[0]); // Extrahera loggID
-                        dao.deleteLog(loggID);
-
-                        uppdateraLoggLista();  // Uppdatera listan efter borttagning
-                        uppdateraDagensSumma();  // Uppdatera kalorimål
+                        int loggID = loggTextTillID.get(selectedLogg);
+                        new KaloriLoggDAO().deleteLog(loggID);
+                        uppdateraLoggLista();
+                        uppdateraDagensSumma();
                     }
                 });
             }
         });
-
-        layout.getChildren().addAll(
-                new Label("Dagens totala kalorier:"), dagensSummaText,
-                new Label("Loggar för idag:"), loggLista,
-                new Label("Vad har du ätit?"), matField,
-                new Label("Kalorier:"), kalorierField,
-                new Label("Datum:"), datumPicker,
-                sparaButton,
-                new Label("ProgressBar för kaloriintag:"),
-                kaloriProgressBox,  // Lägg till ProgressBar till layouten
-                procentText // Lägg till procenttext för att visa hur mycket av målet som är uppnått
-        );
-
-        kaloriProgressBox.getChildren().addAll(kaloriProgressBar, procentText); // Lägg ProgressBar och procent i HBox
 
         sparaButton.setOnAction(event -> {
             try {
@@ -131,28 +112,19 @@ public class KaloriLoggScreen {
                 LocalDate datum = datumPicker.getValue();
 
                 int kontoID = SessionManager.getAktivtKontoID();
-                if (kontoID == -1) throw new IllegalStateException("Ingen användare inloggad");
-
                 KaloriLogg logg = new KaloriLogg(datum, mat, kalorier, kontoID);
-                KaloriLoggDAO dao = new KaloriLoggDAO();
-
-                // Spara kalorier
-                boolean sparat = dao.addLog(logg);
+                boolean sparat = new KaloriLoggDAO().addLog(logg);
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Resultat");
                 alert.setHeaderText(null);
-                alert.setContentText(sparat
-                        ? " Sparat: " + mat + " (" + kalorier + " kcal)"
-                        : " Kunde inte spara.");
+                alert.setContentText(sparat ? " Sparat: " + mat + " (" + kalorier + " kcal)" : " Kunde inte spara.");
                 alert.showAndWait();
 
-                // Uppdatera listor och totalsumma
                 uppdateraDagensSumma();
                 uppdateraLoggLista();
                 matField.clear();
                 kalorierField.clear();
-
             } catch (Exception ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Fel");
@@ -160,47 +132,67 @@ public class KaloriLoggScreen {
                 alert.showAndWait();
             }
         });
+
+        layout.getChildren().addAll(
+                new Label("Dagens totala kalorier:"), dagensSummaText,
+                new Label("Loggar för valt datum:"), loggLista,
+                new Label("Vad har du ätit?"), matField,
+                new Label("Kalorier:"), kalorierField,
+                new Label("Datum:"), datumPicker,
+                sparaButton,
+                new Label("ProgressBar för kaloriintag:"),
+                kaloriProgressBox,
+                procentText
+        );
+
+        kaloriProgressBox.getChildren().addAll(kaloriProgressBar, procentText);
     }
 
     public Parent getRoot() {
         return layout;
     }
 
-    // Uppdatera dagens totala kalorier samt progressbar
     private void uppdateraDagensSumma() {
         int kontoID = SessionManager.getAktivtKontoID();
         if (kontoID == -1) {
             dagensSummaText.setText("Inte inloggad");
-            kaloriProgressBar.setProgress(0); // Sätt progressbar till 0 om inte inloggad
-            procentText.setText("0%");  // Sätt procenten till 0 om inte inloggad
+            kaloriProgressBar.setProgress(0);
+            procentText.setText("0%");
             return;
         }
 
+        LocalDate datum = datumPicker.getValue();
         KaloriLoggDAO dao = new KaloriLoggDAO();
-        int total = dao.countTotalCalories(LocalDate.now(), kontoID);
-        int dagligtMal = 2500;  // Justera till användarens mål om det behövs
-        int kvarTillMal = dagligtMal - total;
+        int total = dao.countTotalCalories(datum, kontoID);
 
+        KontoDAO kontoDAO = new KontoDAO();
+        Konto konto = kontoDAO.getAccountByID(kontoID);
+        int dagligtMal = konto.getDagligtMal();
+
+        int kvarTillMal = dagligtMal - total;
         dagensSummaText.setText("Totalt: " + total + " kcal\nKvar till mål: " + kvarTillMal + " kcal");
 
-        // Uppdatera ProgressBar med procent av dagens mål
-        double progress = (double) total / dagligtMal;  // Beräkna hur mycket procent av målet som är uppnått
+        double progress = (double) total / dagligtMal;
         kaloriProgressBar.setProgress(progress);
-
-        // Uppdatera procenten som text
         int procent = (int) (progress * 100);
         procentText.setText(procent + "%");
     }
 
     private void uppdateraLoggLista() {
         loggLista.getItems().clear();
+        loggTextTillID.clear();
+
         int kontoID = SessionManager.getAktivtKontoID();
         if (kontoID == -1) return;
 
+        LocalDate datum = datumPicker.getValue();
         KaloriLoggDAO dao = new KaloriLoggDAO();
-        List<KaloriLogg> loggar = dao.getLogsForDate(LocalDate.now(), kontoID);
+        List<KaloriLogg> loggar = dao.getLogsForDate(datum, kontoID);
+
         for (KaloriLogg logg : loggar) {
-            loggLista.getItems().add(logg.getBeskrivning() + " (" + logg.getKalorier() + " kcal)");
+            String text = logg.getBeskrivning() + " (" + logg.getKalorier() + " kcal)";
+            loggLista.getItems().add(text);
+            loggTextTillID.put(text, logg.getLoggID());
         }
     }
 }

@@ -4,14 +4,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.FitnessApp1.Main;
 import org.FitnessApp1.model.Konto;
 import org.FitnessApp1.model.KontoDAO;
 import org.FitnessApp1.model.SessionManager;
-import org.FitnessApp1.view.EditProfileScreen;
-import org.FitnessApp1.view.KaloriLoggScreen;
-import org.FitnessApp1.view.MainMenuScreen;
-import org.FitnessApp1.view.StatisticScreen;
-import org.FitnessApp1.view.StartScreen;
+import org.FitnessApp1.view.*;
 
 public class MainMenuController {
 
@@ -27,9 +24,7 @@ public class MainMenuController {
     }
 
     private void initHandlers() {
-        view.getFindGymsButton().setOnAction(e -> {
-            mapsController.showGym();
-        });
+        view.getFindGymsButton().setOnAction(e -> mapsController.showGym());
 
         view.getStatisticsButton().setOnAction(e -> {
             StatisticScreen statisticScreen = new StatisticScreen();
@@ -55,10 +50,8 @@ public class MainMenuController {
                     SessionManager.clearAktivtKontoID();
                     System.out.println("Användare har loggats ut.");
 
-                    // Gå tillbaka till startsidan
-                    StartScreen startScreen = new StartScreen();
-                    Scene startScene = new Scene(startScreen.getRoot(), 500, 400);
-                    primaryStage.setScene(startScene);
+                    // Anropa metod från Main för att visa StartScreen med rätt logik
+                    Main.visaStartScreen(primaryStage);
                 }
             });
         });
