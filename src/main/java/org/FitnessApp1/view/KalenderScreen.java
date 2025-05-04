@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.FitnessApp1.controller.CalendarController;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -18,6 +19,8 @@ public class KalenderScreen {
     private GridPane kalenderGrid;
     private Label månadLabel;
     private VBox root;
+    private CalendarController calendarController;
+    private LocalDate valdDag;
 
     public KalenderScreen() {
         aktuellMånad = YearMonth.now(); // Starta med nuvarande månad
@@ -33,8 +36,8 @@ public class KalenderScreen {
     }
 
     private void skapaKalender() {
-        root = new VBox(10);
-        root.setPadding(new Insets(10));
+        root = new VBox(20); // lite mer spacing
+        root.setPadding(new Insets(20));
         root.setAlignment(Pos.TOP_CENTER);
 
         HBox header = new HBox(10);
@@ -62,7 +65,44 @@ public class KalenderScreen {
         kalenderGrid.setVgap(5);
         kalenderGrid.setAlignment(Pos.CENTER);
 
-        root.getChildren().addAll(header, kalenderGrid);
+        // Skapa knapp-rad
+        HBox knappRad = new HBox(10);
+        knappRad.setAlignment(Pos.CENTER);
+
+        Button läggTillKnapp = new Button("Lägg till / ändra anteckning");
+        Button taBortKnapp = new Button("Ta bort anteckning");
+        Button visaKnapp = new Button("Visa anteckning");
+
+        knappRad.getChildren().addAll(läggTillKnapp, taBortKnapp, visaKnapp);
+
+        // Funktionalitet
+        läggTillKnapp.setOnAction(e -> {
+            if (valdDag != null) {
+                calendarController.visaAnteckningsDialog(valdDag);
+            } else {
+                visaFelmeddelande("Välj ett datum först.");
+            }
+        });
+
+        taBortKnapp.setOnAction(e -> {
+            if (valdDag != null) {
+                calendarController.taBortAnteckning(valdDag);
+            } else {
+                visaFelmeddelande("Välj ett datum först.");
+            }
+        });
+
+        visaKnapp.setOnAction(e -> {
+            if (valdDag != null) {
+                calendarController.visaBefintligAnteckning(valdDag);
+            } else {
+                visaFelmeddelande("Välj ett datum först.");
+            }
+        });
+
+        // Lägg till allt i root – nu med knappRad!
+        root.getChildren().addAll(header, kalenderGrid, knappRad);
+
         fyllKalender();
     }
 
@@ -91,11 +131,27 @@ public class KalenderScreen {
         int rad = 1;
         int kolumn = startKolumn;
 
-        for (int dag = 1; dag <= antalDagar; dag++) {
-            Button dagKnapp = new Button(String.valueOf(dag));
-            dagKnapp.setPrefSize(40, 40);
 
-            // Här kan du lägga till logik för anteckningar om du vill
+        for (int dag = 1; dag <= antalDagar; dag++) {
+            LocalDate dagensDatum = aktuellMånad.atDay(dag);
+            Button dagKnapp = new Button(String.valueOf(dag));
+            dagKnapp.setPrefSize(50, 50);
+
+            // Färgmarkera om det finns en anteckning
+            if (CalendarController.harAnteckning(dagensDatum)) {
+                dagKnapp.setStyle("-fx-background-color: lightgreen;");
+            }
+
+            // Färgmarkera vald dag
+            if (dagensDatum.equals(valdDag)) {
+                dagKnapp.setStyle("-fx-background-color: deepskyblue; -fx-text-fill: white;");
+            }
+
+            dagKnapp.setOnAction(e -> {
+                valdDag = dagensDatum;
+                uppdateraKalender(); // Rita om kalendern så färgen uppdateras
+            });
+
             kalenderGrid.add(dagKnapp, kolumn, rad);
 
             kolumn++;
@@ -104,5 +160,15 @@ public class KalenderScreen {
                 rad++;
             }
         }
+
+
+    }
+
+    private void visaFelmeddelande(String meddelande) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+        alert.setTitle("Fel");
+        alert.setHeaderText(null);
+        alert.setContentText(meddelande);
+        alert.showAndWait();
     }
 }
