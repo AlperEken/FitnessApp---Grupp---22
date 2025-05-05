@@ -29,11 +29,11 @@ public class MainMenuScreen {
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         findGymsButton = new Button("🗺 Hitta utegym i Malmö");
+        kalenderButton = new Button("Kalender");
         calorieLogButton = new Button("🍔 Logga kalorier");
         statisticsButton = new Button("📊 Visa statistik");
-        loggaUtButton = new Button("🚪 Logga ut");
         editProfileButton = new Button("✏️ Redigera konto");
-        kalenderButton = new Button("Kalender");
+        loggaUtButton = new Button("🚪 Logga ut");
         findGymsButton.setPrefWidth(250);
         calorieLogButton.setPrefWidth(250);
         statisticsButton.setPrefWidth(250);
@@ -44,11 +44,12 @@ public class MainMenuScreen {
         layout.getChildren().addAll(
                 title,
                 findGymsButton,
+                kalenderButton,
                 calorieLogButton,
                 statisticsButton,
-                loggaUtButton,
                 editProfileButton,
-                kalenderButton
+                loggaUtButton
+
         );
     }
 
