@@ -18,7 +18,8 @@ public class GoogleMapsController {
                 new GymLocation("Bulltofta Utegym", 55.59798500362362, 13.065033766551943, "/images/Bulltofta.jpg"),
                 new GymLocation("Pildammsparken Utegym",  55.59038983277246,12.996603428453424, "/images/Pildammsparken.jpg"),
                 new GymLocation("Hyllie Utegym", 55.5609909735987, 12.977343859646124, "/images/Hyllie.jpg"),
-                new GymLocation("Rörsjöparken Utegym", 55.605748275337206, 13.017682664421155, "/images/Rörsjöparken.jpg")
+                new GymLocation("Rörsjöparken Utegym", 55.605748275337206, 13.017682664421155, "/images/Rörsjöparken.jpg"),
+                new GymLocation("Sibbarp Utegym", 55.575012916302, 12.910007058978954, "/images/Sibbarp.png")
         );
         GoogleMapsGymCardView view = new GoogleMapsGymCardView(gyms);
         Scene scene = new Scene(view, 800, 500);
