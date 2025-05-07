@@ -6,8 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.FitnessApp1.model.Konto;
-import org.FitnessApp1.model.KontoDAO;
+import org.FitnessApp1.model.Account;
+import org.FitnessApp1.model.AccountDAO;
 import org.FitnessApp1.model.SessionManager;
 
 public class EditProfileScreen {
@@ -23,21 +23,21 @@ public class EditProfileScreen {
     private Button saveButton;
     private Button deleteButton;
 
-    private final Konto originalKonto;
+    private final Account originalAccount;
 
-    public EditProfileScreen(Konto konto) {
-        this.originalKonto = konto;
+    public EditProfileScreen(Account account) {
+        this.originalAccount = account;
 
         layout = new VBox(10);
         layout.setPadding(new Insets(20));
 
-        nameField = new TextField(konto.getNamn());
-        efternameField = new TextField(konto.getEfternamn());
-        emailField = new TextField(konto.getEpost());
+        nameField = new TextField(account.getNamn());
+        efternameField = new TextField(account.getEfternamn());
+        emailField = new TextField(account.getEpost());
         passwordField = new PasswordField();
-        weightField = new TextField(String.valueOf(konto.getVikt()));
-        genderField = new TextField(konto.getKön());
-        goalField = new TextField(String.valueOf(konto.getDagligtMal()));
+        weightField = new TextField(String.valueOf(account.getVikt()));
+        genderField = new TextField(account.getKön());
+        goalField = new TextField(String.valueOf(account.getDagligtMal()));
         saveButton = new Button("Spara");
         deleteButton = new Button("Radera konto");
 
@@ -67,22 +67,22 @@ public class EditProfileScreen {
             String nyttKön = genderField.getText();
             int nyttMål = Integer.parseInt(goalField.getText());
 
-            String lösenAttSpara = nyttLösen.isEmpty() ? originalKonto.getLösenord() : nyttLösen;
+            String lösenAttSpara = nyttLösen.isEmpty() ? originalAccount.getLösenord() : nyttLösen;
 
-            Konto uppdateratKonto = new Konto(
-                    originalKonto.getKontoID(),
+            Account uppdateratAccount = new Account(
+                    originalAccount.getKontoID(),
                     nyttNamn,
                     nyttEfternamn,
                     nyttEpost,
                     lösenAttSpara,
-                    originalKonto.getÅlder(),
+                    originalAccount.getÅlder(),
                     nyVikt,
                     nyttKön,
                     nyttMål
             );
 
-            KontoDAO kontoDAO = new KontoDAO();
-            boolean lyckades = kontoDAO.uppdateraKonto(uppdateratKonto);
+            AccountDAO accountDAO = new AccountDAO();
+            boolean lyckades = accountDAO.uppdateraKonto(uppdateratAccount);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Profiluppdatering");
@@ -109,8 +109,8 @@ public class EditProfileScreen {
         confirm.setContentText("Detta kommer att permanent ta bort ditt konto.");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                KontoDAO kontoDAO = new KontoDAO();
-                boolean raderat = kontoDAO.raderaKonto(originalKonto.getKontoID());
+                AccountDAO accountDAO = new AccountDAO();
+                boolean raderat = accountDAO.raderaKonto(originalAccount.getKontoID());
                 Alert resultat = new Alert(Alert.AlertType.INFORMATION);
                 resultat.setHeaderText(null);
                 resultat.setContentText(raderat ? "Konto har raderats." : "Kunde inte radera konto.");

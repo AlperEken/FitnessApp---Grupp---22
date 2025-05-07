@@ -5,10 +5,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KaloriLoggDAO {
+public class CalorieLogDAO {
 
     // Lägg till ny logg
-    public boolean addLog(KaloriLogg logg) {
+    public boolean addLog(CalorieLog logg) {
         String sql = "INSERT INTO kalorier (datum, calorier, kontoID, beskrivning) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -30,8 +30,8 @@ public class KaloriLoggDAO {
     }
 
     // Hämta alla loggar för en specifik dag
-    public List<KaloriLogg> getLogsForDate(LocalDate datum, int kontoID) {
-        List<KaloriLogg> loggar = new ArrayList<>();
+    public List<CalorieLog> getLogsForDate(LocalDate datum, int kontoID) {
+        List<CalorieLog> loggar = new ArrayList<>();
         String sql = "SELECT loggID, datum, calorier, beskrivning FROM kalorier WHERE datum = ? AND kontoID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -47,7 +47,7 @@ public class KaloriLoggDAO {
                 int kalorier = rs.getInt("calorier");
                 String beskrivning = rs.getString("beskrivning");
 
-                KaloriLogg logg = new KaloriLogg(loggID, datum, beskrivning, kalorier, kontoID);
+                CalorieLog logg = new CalorieLog(loggID, datum, beskrivning, kalorier, kontoID);
                 loggar.add(logg);
             }
 
@@ -82,8 +82,8 @@ public class KaloriLoggDAO {
     }
 
     // Hämta loggar för ett specifikt datumintervall (t.ex. hela månaden eller valfri period)
-    public List<KaloriLogg> getLogsForDateRange(LocalDate startDate, LocalDate endDate, int kontoID) {
-        List<KaloriLogg> loggar = new ArrayList<>();
+    public List<CalorieLog> getLogsForDateRange(LocalDate startDate, LocalDate endDate, int kontoID) {
+        List<CalorieLog> loggar = new ArrayList<>();
         String sql = "SELECT loggID, datum, calorier, beskrivning FROM kalorier WHERE datum BETWEEN ? AND ? AND kontoID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -100,7 +100,7 @@ public class KaloriLoggDAO {
                 int kalorier = rs.getInt("calorier");
                 String beskrivning = rs.getString("beskrivning");
 
-                KaloriLogg logg = new KaloriLogg(loggID, rs.getDate("datum").toLocalDate(), beskrivning, kalorier, kontoID);
+                CalorieLog logg = new CalorieLog(loggID, rs.getDate("datum").toLocalDate(), beskrivning, kalorier, kontoID);
                 loggar.add(logg);
             }
 
@@ -112,7 +112,7 @@ public class KaloriLoggDAO {
     }
 
     // Uppdatera befintlig logg
-    public boolean updateLogs(KaloriLogg logg) {
+    public boolean updateLogs(CalorieLog logg) {
         String sql = "UPDATE kalorier SET datum = ?, calorier = ?, beskrivning = ? WHERE loggID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();

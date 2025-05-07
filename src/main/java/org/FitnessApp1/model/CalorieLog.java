@@ -2,7 +2,7 @@ package org.FitnessApp1.model;
 
 import java.time.LocalDate;
 
-public class KaloriLogg {
+public class CalorieLog {
 
     private int loggID; // unikt ID från databasen
     private LocalDate datum;
@@ -10,7 +10,7 @@ public class KaloriLogg {
     private int kalorier;
     private int kontoID;
 
-    public KaloriLogg(int loggID, LocalDate datum, String beskrivning, int kalorier, int kontoID) {
+    public CalorieLog(int loggID, LocalDate datum, String beskrivning, int kalorier, int kontoID) {
         this.loggID = loggID;
         this.datum = datum;
         this.beskrivning = beskrivning;
@@ -18,7 +18,7 @@ public class KaloriLogg {
         this.kontoID = kontoID;
     }
 
-    public KaloriLogg(LocalDate datum, String beskrivning, int kalorier, int kontoID) {
+    public CalorieLog(LocalDate datum, String beskrivning, int kalorier, int kontoID) {
         this(-1, datum, beskrivning, kalorier, kontoID); // används vid ny post
     }
 

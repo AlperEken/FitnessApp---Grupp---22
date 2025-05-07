@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.DayOfWeek;
 
-public class KalenderScreen {
+public class CalenderScreen {
 
     private YearMonth aktuellMånad;
     private GridPane kalenderGrid;
@@ -22,7 +22,7 @@ public class KalenderScreen {
     private CalendarController calendarController;
     private LocalDate valdDag;
 
-    public KalenderScreen() {
+    public CalenderScreen() {
         aktuellMånad = YearMonth.now(); // Starta med nuvarande månad
         skapaKalender();
     }

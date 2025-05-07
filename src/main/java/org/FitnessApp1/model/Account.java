@@ -1,6 +1,6 @@
 package org.FitnessApp1.model;
 
-public class Konto {
+public class Account {
     private int kontoID;
     private String namn;
     private String efternamn;
@@ -12,11 +12,11 @@ public class Konto {
     private int dagligtMal;
 
     // Tom konstruktor
-    public Konto() {}
+    public Account() {}
 
     // Konstruktor för nyregistrering (utan ID)
-    public Konto(String namn, String efternamn, String epost, String lösenord,
-                 int ålder, double vikt, String kön, int dagligtMal) {
+    public Account(String namn, String efternamn, String epost, String lösenord,
+                   int ålder, double vikt, String kön, int dagligtMal) {
         this.namn = namn;
         this.efternamn = efternamn;
         this.epost = epost;
@@ -28,8 +28,8 @@ public class Konto {
     }
 
     // Fullständig konstruktor inkl. kontoID
-    public Konto(int kontoID, String namn, String efternamn, String epost, String lösenord,
-                 int ålder, double vikt, String kön, int dagligtMal) {
+    public Account(int kontoID, String namn, String efternamn, String epost, String lösenord,
+                   int ålder, double vikt, String kön, int dagligtMal) {
         this.kontoID = kontoID;
         this.namn = namn;
         this.efternamn = efternamn;

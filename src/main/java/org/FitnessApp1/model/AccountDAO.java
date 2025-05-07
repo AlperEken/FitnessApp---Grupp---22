@@ -4,10 +4,10 @@ import org.mindrot.jbcrypt.BCrypt; // Import för BCrypt
 
 import java.sql.*;
 
-public class KontoDAO {
+public class AccountDAO {
 
     // Hämta konto baserat på kontoID
-    public Konto getAccountByID(int kontoID) {
+    public Account getAccountByID(int kontoID) {
         String sql = "SELECT * FROM konto WHERE kontoID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -28,7 +28,7 @@ public class KontoDAO {
                 String kön = rs.getString("kön");
                 int dagligtMal = rs.getInt("dagligtMål");
 
-                return new Konto(id, namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMal);
+                return new Account(id, namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMal);
             }
 
         } catch (SQLException e) {
@@ -106,24 +106,24 @@ public class KontoDAO {
 
 
     // Registrera ett nytt konto
-    public boolean registeraccount(Konto konto) {
+    public boolean registeraccount(Account account) {
         String sql = "INSERT INTO konto (namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMål) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             // Hasha lösenordet innan det sparas
-            String hashedPassword = BCrypt.hashpw(konto.getLösenord(), BCrypt.gensalt());
+            String hashedPassword = BCrypt.hashpw(account.getLösenord(), BCrypt.gensalt());
 
             // Sätt parametrar
-            stmt.setString(1, konto.getNamn());
-            stmt.setString(2, konto.getEfternamn());
-            stmt.setString(3, konto.getEpost());
+            stmt.setString(1, account.getNamn());
+            stmt.setString(2, account.getEfternamn());
+            stmt.setString(3, account.getEpost());
             stmt.setString(4, hashedPassword);
-            stmt.setInt(5, konto.getÅlder());
-            stmt.setDouble(6, konto.getVikt());
-            stmt.setString(7, konto.getKön());
-            stmt.setInt(8, konto.getDagligtMal());
+            stmt.setInt(5, account.getÅlder());
+            stmt.setDouble(6, account.getVikt());
+            stmt.setString(7, account.getKön());
+            stmt.setInt(8, account.getDagligtMal());
 
             // Utför insättningen
             int rowsAffected = stmt.executeUpdate();
@@ -137,27 +137,27 @@ public class KontoDAO {
     }
 
     // Uppdatera konto (exempel: användare ändrar sina uppgifter)
-    public boolean uppdateraKonto(Konto konto) {
+    public boolean uppdateraKonto(Account account) {
         String sql = "UPDATE konto SET namn = ?, efternamn = ?, epost = ?, lösenord = ?, ålder = ?, vikt = ?, kön = ?, dagligtMål = ? WHERE kontoID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            String lösenord = konto.getLösenord();
+            String lösenord = account.getLösenord();
             // Hasha endast om lösenordet INTE är hashat redan
             if (!lösenord.startsWith("$2a$") && !lösenord.startsWith("$2b$")) {
                 lösenord = BCrypt.hashpw(lösenord, BCrypt.gensalt());
             }
 
-            stmt.setString(1, konto.getNamn());
-            stmt.setString(2, konto.getEfternamn());
-            stmt.setString(3, konto.getEpost());
+            stmt.setString(1, account.getNamn());
+            stmt.setString(2, account.getEfternamn());
+            stmt.setString(3, account.getEpost());
             stmt.setString(4, lösenord);
-            stmt.setInt(5, konto.getÅlder());
-            stmt.setDouble(6, konto.getVikt());
-            stmt.setString(7, konto.getKön());
-            stmt.setInt(8, konto.getDagligtMal());
-            stmt.setInt(9, konto.getKontoID());
+            stmt.setInt(5, account.getÅlder());
+            stmt.setDouble(6, account.getVikt());
+            stmt.setString(7, account.getKön());
+            stmt.setInt(8, account.getDagligtMal());
+            stmt.setInt(9, account.getKontoID());
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;

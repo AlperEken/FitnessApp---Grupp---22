@@ -6,10 +6,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import org.FitnessApp1.model.KaloriLogg;
-import org.FitnessApp1.model.KaloriLoggDAO;
-import org.FitnessApp1.model.Konto;
-import org.FitnessApp1.model.KontoDAO;
+import org.FitnessApp1.model.CalorieLog;
+import org.FitnessApp1.model.CalorieLogDAO;
+import org.FitnessApp1.model.Account;
+import org.FitnessApp1.model.AccountDAO;
 import org.FitnessApp1.model.SessionManager;
 
 import java.time.LocalDate;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KaloriLoggScreen {
+public class CalorieLogScreen {
 
     private VBox layout;
     private TextField matField;
@@ -31,7 +31,7 @@ public class KaloriLoggScreen {
     private HBox kaloriProgressBox;
     private Map<String, Integer> loggTextTillID = new HashMap<>();
 
-    public KaloriLoggScreen() {
+    public CalorieLogScreen() {
         layout = new VBox(10);
         layout.setPadding(new Insets(20));
 
@@ -74,8 +74,8 @@ public class KaloriLoggScreen {
 
                         int kontoID = SessionManager.getAktivtKontoID();
                         int loggID = loggTextTillID.get(selectedLogg);
-                        KaloriLogg logg = new KaloriLogg(loggID, datumPicker.getValue(), newDescription, newCalories, kontoID);
-                        new KaloriLoggDAO().updateLogs(logg);
+                        CalorieLog logg = new CalorieLog(loggID, datumPicker.getValue(), newDescription, newCalories, kontoID);
+                        new CalorieLogDAO().updateLogs(logg);
 
                         uppdateraLoggLista();
                         uppdateraDagensSumma();
@@ -97,7 +97,7 @@ public class KaloriLoggScreen {
                 confirmAlert.showAndWait().ifPresent(response -> {
                     if (response == ButtonType.OK) {
                         int loggID = loggTextTillID.get(selectedLogg);
-                        new KaloriLoggDAO().deleteLog(loggID);
+                        new CalorieLogDAO().deleteLog(loggID);
                         uppdateraLoggLista();
                         uppdateraDagensSumma();
                     }
@@ -112,8 +112,8 @@ public class KaloriLoggScreen {
                 LocalDate datum = datumPicker.getValue();
 
                 int kontoID = SessionManager.getAktivtKontoID();
-                KaloriLogg logg = new KaloriLogg(datum, mat, kalorier, kontoID);
-                boolean sparat = new KaloriLoggDAO().addLog(logg);
+                CalorieLog logg = new CalorieLog(datum, mat, kalorier, kontoID);
+                boolean sparat = new CalorieLogDAO().addLog(logg);
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Resultat");
@@ -162,12 +162,12 @@ public class KaloriLoggScreen {
         }
 
         LocalDate datum = datumPicker.getValue();
-        KaloriLoggDAO dao = new KaloriLoggDAO();
+        CalorieLogDAO dao = new CalorieLogDAO();
         int total = dao.countTotalCalories(datum, kontoID);
 
-        KontoDAO kontoDAO = new KontoDAO();
-        Konto konto = kontoDAO.getAccountByID(kontoID);
-        int dagligtMal = konto.getDagligtMal();
+        AccountDAO accountDAO = new AccountDAO();
+        Account account = accountDAO.getAccountByID(kontoID);
+        int dagligtMal = account.getDagligtMal();
 
         int kvarTillMal = dagligtMal - total;
         dagensSummaText.setText("Totalt: " + total + " kcal\nKvar till mål: " + kvarTillMal + " kcal");
@@ -186,10 +186,10 @@ public class KaloriLoggScreen {
         if (kontoID == -1) return;
 
         LocalDate datum = datumPicker.getValue();
-        KaloriLoggDAO dao = new KaloriLoggDAO();
-        List<KaloriLogg> loggar = dao.getLogsForDate(datum, kontoID);
+        CalorieLogDAO dao = new CalorieLogDAO();
+        List<CalorieLog> loggar = dao.getLogsForDate(datum, kontoID);
 
-        for (KaloriLogg logg : loggar) {
+        for (CalorieLog logg : loggar) {
             String text = logg.getBeskrivning() + " (" + logg.getKalorier() + " kcal)";
             loggLista.getItems().add(text);
             loggTextTillID.put(text, logg.getLoggID());

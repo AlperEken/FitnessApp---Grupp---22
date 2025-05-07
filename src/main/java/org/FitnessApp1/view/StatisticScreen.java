@@ -9,8 +9,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.FitnessApp1.model.KaloriLogg;
-import org.FitnessApp1.model.KaloriLoggDAO;
+import org.FitnessApp1.model.CalorieLog;
+import org.FitnessApp1.model.CalorieLogDAO;
 import org.FitnessApp1.model.SessionManager;
 
 import java.time.LocalDate;
@@ -66,13 +66,13 @@ public class StatisticScreen {
         LocalDate startDate = LocalDate.now().withDayOfMonth(1);
         LocalDate endDate = LocalDate.now();
 
-        KaloriLoggDAO dao = new KaloriLoggDAO();
-        List<KaloriLogg> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
+        CalorieLogDAO dao = new CalorieLogDAO();
+        List<CalorieLog> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Kalorier");
 
-        for (KaloriLogg logg : logs) {
+        for (CalorieLog logg : logs) {
             int days = logg.getDatum().getDayOfMonth();
             series.getData().add(new XYChart.Data<>(days, logg.getKalorier()));
         }
