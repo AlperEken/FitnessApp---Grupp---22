@@ -5,6 +5,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.control.Label;
+
+
 
 public class MainMenuScreen {
 
@@ -17,6 +20,9 @@ public class MainMenuScreen {
     private Text title;
     private String username; // Sparar användarnamnet
     private Button kalenderButton;
+    private Label quoteLabel;
+
+
 
     public MainMenuScreen(String username) {
         this.username = username;
@@ -27,6 +33,15 @@ public class MainMenuScreen {
 
         title = new Text("Välkommen, " + username + " till FitnessApp!");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+
+
+
+        quoteLabel = new Label(MotivationalQuotes.getRandomQuote());
+        quoteLabel.setWrapText(true);
+        quoteLabel.setStyle("-fx-font-size: 16px; -fx-font-style: italic;-fx-font-weight: bold; -fx-alignment: center");
+        quoteLabel.setMaxWidth(300);
+
+
 
         findGymsButton = new Button("🗺 Hitta utegym i Malmö");
         kalenderButton = new Button("Kalender");
@@ -41,8 +56,13 @@ public class MainMenuScreen {
         editProfileButton.setPrefWidth(250);
         kalenderButton.setPrefWidth(250);
 
+
+
+
+
         layout.getChildren().addAll(
                 title,
+                quoteLabel,
                 findGymsButton,
                 kalenderButton,
                 calorieLogButton,
