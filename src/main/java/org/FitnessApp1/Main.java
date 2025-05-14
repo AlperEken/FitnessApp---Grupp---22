@@ -20,7 +20,7 @@ public class Main extends Application {
         visaStartScreen(primaryStage);
     }
 
-    // ✅ Visar StartScreen och kopplar knapparna
+    // Visar StartScreen och kopplar knapparna
     public static void visaStartScreen(Stage stage) {
         StartScreen startScreen = new StartScreen(stage);
         Scene scene = new Scene(startScreen.getRoot(), 500, 400);
@@ -63,7 +63,7 @@ public class Main extends Application {
         });
     }
 
-    // ✅ Visar RegisterScreen
+    // Visar RegisterScreen
     public static void visaRegistreringsskärm(Stage stage) {
 //        RegisterScreen registerScreen = new RegisterScreen(stage);
         RegisterScreen registerScreen = new RegisterScreen(primaryStageRef); // 👈 använd det stora fönstret

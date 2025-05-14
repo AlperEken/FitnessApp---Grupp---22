@@ -24,7 +24,11 @@ public class GoogleMapsController {
                 new GymLocation("Pildammsparken Utegym",  55.59038983277246,12.996603428453424, "/images/Pildammsparken.jpg"),
                 new GymLocation("Hyllie Utegym", 55.5609909735987, 12.977343859646124, "/images/Hyllie.jpg"),
                 new GymLocation("Rörsjöparken Utegym", 55.605748275337206, 13.017682664421155, "/images/Rörsjöparken.jpg"),
-                new GymLocation("Sibbarp Utegym", 55.575012916302, 12.910007058978954, "/images/Sibbarp.png")
+                new GymLocation("Sibbarp Utegym", 55.575012916302, 12.910007058978954, "/images/Sibbarp.png"),
+                new GymLocation("Bellevue Utegym", 55.584392511567145, 12.970413803044629, "/images/Bellevueparken.png"),
+                new GymLocation("Lindängens Utegym", 55.56149578873109, 13.014408203301276, "/images/Lindängsparken.png"),
+                new GymLocation("Klagshamns Utegym", 55.52426537206233, 12.90199449449149, "/images/Klagshamn.png"),
+                new GymLocation("Nydala Utegym", 55.572282959713085, 13.018263558377786, "/images/Nydalaparken.png")
         );
         GoogleMapsGymCardView view = new GoogleMapsGymCardView(gyms);
         Image homeImage = new Image(getClass().getResourceAsStream("/images/home.png"));
