@@ -1,15 +1,20 @@
 package org.FitnessApp1.controller;
 
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.FitnessApp1.model.GymLocation;
+import org.FitnessApp1.model.SessionManager;
 import org.FitnessApp1.view.GoogleMapsGymCardView;
+import org.FitnessApp1.view.MainMenuScreen;
 
 import java.util.List;
 
 public class GoogleMapsController {
 
-    public void showGym() {
+    public void showGym( Stage primaryStage) {
         Stage stage = new Stage();
         stage.setTitle("Utegym i Malmö");
 
@@ -22,9 +27,29 @@ public class GoogleMapsController {
                 new GymLocation("Sibbarp Utegym", 55.575012916302, 12.910007058978954, "/images/Sibbarp.png")
         );
         GoogleMapsGymCardView view = new GoogleMapsGymCardView(gyms);
-        Scene scene = new Scene(view, 800, 500);
+        Image homeImage = new Image(getClass().getResourceAsStream("/images/home.png"));
+        ImageView homeIcon = new ImageView(homeImage);
+        homeIcon.setFitWidth(24);
+        homeIcon.setFitHeight(24);
+        homeIcon.setPreserveRatio(true);
+        homeIcon.setStyle("-fx-cursor: hand;");
+        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
+        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
 
-        stage.setScene(scene);
-        stage.show();
+        homeIcon.setOnMouseClicked(e -> {
+            MainMenuScreen mainMenuScreen = new MainMenuScreen(SessionManager.getUsername());
+            new MainMenuController(mainMenuScreen, primaryStage);
+            Scene mainScene = new Scene(mainMenuScreen.getRoot(), 800, 600);
+            primaryStage.setScene(mainScene);
+        });
+
+        BorderPane root = new BorderPane();
+        root.setTop(homeIcon);
+        root.setCenter(view.getRoot()); // 👈 ScrollPane från vyklassen
+
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Utegym i Malmö");
+        primaryStage.show();
     }
 }

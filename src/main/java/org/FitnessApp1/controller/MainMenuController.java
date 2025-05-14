@@ -24,20 +24,18 @@ public class MainMenuController {
     }
 
     private void initHandlers() {
-        view.getFindGymsButton().setOnAction(e -> mapsController.showGym());
+        view.getFindGymsButton().setOnAction(e -> mapsController.showGym(primaryStage));
 
         view.getStatisticsButton().setOnAction(e -> {
             StatisticScreen statisticScreen = new StatisticScreen();
-            statisticScreen.showInNewWindow();
+            statisticScreen.showInPrimaryWindow();
         });
 
         view.getCalorieLogButton().setOnAction(e -> {
-            CalorieLogScreen calorieLogScreen = new CalorieLogScreen();
-            Scene kaloriScene = new Scene(calorieLogScreen.getRoot(), 400, 300);
-            Stage stage = new Stage();
-            stage.setTitle("Logga kalorier");
-            stage.setScene(kaloriScene);
-            stage.show();
+            CalorieLogScreen screen = new CalorieLogScreen();
+            Scene scene = new Scene(screen.getRoot(), 600, 500);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Logga kalorier");
         });
 
         view.getLoggaUtButton().setOnAction(e -> {
@@ -60,8 +58,9 @@ public class MainMenuController {
             Account account = accountDAO.getAccountByID(kontoID);
 
             if (account != null) {
-                EditProfileScreen editProfileScreen = new EditProfileScreen(account);
-                editProfileScreen.visaFönster();
+                EditProfileScreen editProfileScreen = new EditProfileScreen(account, primaryStage);
+                Scene scene = new Scene(editProfileScreen.getRoot(), 400, 550);
+                primaryStage.setScene(scene);
             } else {
                 System.out.println("Konto hittades inte.");
             }
