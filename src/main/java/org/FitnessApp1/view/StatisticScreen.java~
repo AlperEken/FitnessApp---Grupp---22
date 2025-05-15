@@ -9,8 +9,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.FitnessApp1.model.CalorieLog;
-import org.FitnessApp1.model.CalorieLogDAO;
+import org.FitnessApp1.model.KaloriLogg;
+import org.FitnessApp1.model.KaloriLoggDAO;
 import org.FitnessApp1.model.SessionManager;
 
 import java.time.LocalDate;
@@ -80,12 +80,12 @@ public class StatisticScreen {
         LocalDate startDate = LocalDate.now().withDayOfMonth(1);
         LocalDate endDate = LocalDate.now();
 
-        CalorieLogDAO dao = new CalorieLogDAO();
-        List<CalorieLog> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
+        KaloriLoggDAO dao = new KaloriLoggDAO();
+        List<KaloriLogg> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
 
         // Gruppera kalorier per dag (summera vid flera poster samma dag)
         Map<Integer, Integer> kalorierPerDag = new TreeMap<>();
-        for (CalorieLog logg : logs) {
+        for (KaloriLogg logg : logs) {
             int dag = logg.getDatum().getDayOfMonth();
             kalorierPerDag.put(dag, kalorierPerDag.getOrDefault(dag, 0) + logg.getKalorier());
         }
