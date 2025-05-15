@@ -3,11 +3,9 @@ package org.FitnessApp1.view;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.control.Label;
-
-
 
 public class MainMenuScreen {
 
@@ -22,39 +20,47 @@ public class MainMenuScreen {
     private Button kalenderButton;
     private Label quoteLabel;
 
-
-
     public MainMenuScreen(String username) {
         this.username = username;
 
-        layout = new VBox(15);
-        layout.setPadding(new Insets(20));
-        layout.setStyle("-fx-alignment: center;");
+        layout = new VBox(25);
+        layout.setPadding(new Insets(40));
+        layout.setStyle("""
+            -fx-alignment: center;
+            -fx-background-color: linear-gradient(to bottom, #fdfdfd, #dbeafe);
+        """);
 
-        title = new Text("Välkommen, " + username + " till FitnessApp!");
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-
-
+        title = new Text("Välkommen, " + username + "!");
+        title.setStyle("""
+            -fx-font-size: 26px;
+            -fx-font-weight: bold;
+            -fx-text-fill: #1E3A8A;
+        """);
 
         quoteLabel = new Label(MotivationalQuotes.getRandomQuote());
         quoteLabel.setWrapText(true);
         quoteLabel.setStyle("-fx-font-size: 16px; -fx-font-style: italic;-fx-font-weight: bold; -fx-alignment: center");
         quoteLabel.setMaxWidth(300);
 
-
-
-        findGymsButton = new Button("🗺 Hitta utegym i Malmö");
+        findGymsButton = new Button("Hitta utegym i Malmö");
         kalenderButton = new Button("Kalender");
         calorieLogButton = new Button("🍔 Logga kalorier");
         statisticsButton = new Button("📊 Visa statistik");
         editProfileButton = new Button("✏️ Redigera konto");
         loggaUtButton = new Button("🚪 Logga ut");
-        findGymsButton.setPrefWidth(250);
-        calorieLogButton.setPrefWidth(250);
-        statisticsButton.setPrefWidth(250);
-        loggaUtButton.setPrefWidth(250);
-        editProfileButton.setPrefWidth(250);
-        kalenderButton.setPrefWidth(250);
+        findGymsButton.setPrefWidth(300);
+        calorieLogButton.setPrefWidth(300);
+        statisticsButton.setPrefWidth(300);
+        loggaUtButton.setPrefWidth(300);
+        editProfileButton.setPrefWidth(300);
+        kalenderButton.setPrefWidth(300);
+
+        styleButton(findGymsButton);
+        styleButton(calorieLogButton);
+        styleButton(statisticsButton);
+        styleButton(editProfileButton);
+        styleButton(loggaUtButton);
+        styleButton(kalenderButton);
 
         layout.getChildren().addAll(
                 title,
@@ -67,6 +73,40 @@ public class MainMenuScreen {
                 loggaUtButton
 
         );
+    }
+
+    private void styleButton(Button button) {
+        button.setStyle("""
+        -fx-background-color: #1E3A8A;
+        -fx-text-fill: white;
+        -fx-font-size: 16px;
+        -fx-font-weight: bold;
+        -fx-background-radius: 30;
+        -fx-padding: 10 30 10 30;
+        -fx-cursor: hand;
+    """);
+
+        // Hover-effekt
+        button.setOnMouseEntered(e -> button.setStyle("""
+        -fx-background-color: #3B82F6;
+        -fx-text-fill: white;
+        -fx-font-size: 16px;
+        -fx-font-weight: bold;
+        -fx-background-radius: 30;
+        -fx-padding: 10 30 10 30;
+        -fx-cursor: hand;
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.5, 0, 2);
+    """));
+
+        button.setOnMouseExited(e -> button.setStyle("""
+        -fx-background-color: #1E3A8A;
+        -fx-text-fill: white;
+        -fx-font-size: 16px;
+        -fx-font-weight: bold;
+        -fx-background-radius: 30;
+        -fx-padding: 10 30 10 30;
+        -fx-cursor: hand;
+    """));
     }
 
     public Parent getRoot() {
@@ -108,3 +148,4 @@ public class MainMenuScreen {
         return kalenderButton;
     }
 }
+
