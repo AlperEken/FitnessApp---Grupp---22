@@ -32,10 +32,12 @@ public class MainMenuController {
         });
 
         view.getCalorieLogButton().setOnAction(e -> {
-            CalorieLogScreen screen = new CalorieLogScreen();
-            Scene scene = new Scene(screen.getRoot(), 600, 500);
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Logga kalorier");
+            CalorieLogScreen calorieLogScreen = new CalorieLogScreen();
+            Scene kaloriScene = new Scene(calorieLogScreen.getRoot(), 400, 300);
+            Stage stage = new Stage();
+            stage.setTitle("Logga kalorier");
+            stage.setScene(kaloriScene);
+            stage.show();
         });
 
         view.getLoggaUtButton().setOnAction(e -> {
@@ -58,9 +60,8 @@ public class MainMenuController {
             Account account = accountDAO.getAccountByID(kontoID);
 
             if (account != null) {
-                EditProfileScreen editProfileScreen = new EditProfileScreen(account, primaryStage);
-                Scene scene = new Scene(editProfileScreen.getRoot(), 400, 550);
-                primaryStage.setScene(scene);
+                EditProfileScreen editProfileScreen = new EditProfileScreen(account);
+                editProfileScreen.visaFönster();
             } else {
                 System.out.println("Konto hittades inte.");
             }
