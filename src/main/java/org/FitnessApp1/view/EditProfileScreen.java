@@ -6,14 +6,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.FitnessApp1.Main;
 import org.FitnessApp1.model.Account;
 import org.FitnessApp1.model.AccountDAO;
 import org.FitnessApp1.model.SessionManager;
 
 public class EditProfileScreen {
 
-    private final Stage primaryStage;
     private VBox layout;
     private TextField nameField;
     private TextField efternameField;
@@ -27,9 +25,8 @@ public class EditProfileScreen {
 
     private final Account originalAccount;
 
-    public EditProfileScreen(Account account, Stage primaryStage) {
+    public EditProfileScreen(Account account) {
         this.originalAccount = account;
-        this.primaryStage = primaryStage;
 
         layout = new VBox(10);
         layout.setPadding(new Insets(20));
@@ -94,13 +91,8 @@ public class EditProfileScreen {
             alert.showAndWait();
 
             if (lyckades) {
-                SessionManager.setUsername(nyttNamn); // uppdatera session om nödvändigt
-                MainMenuScreen menu = new MainMenuScreen(nyttNamn);
-                new org.FitnessApp1.controller.MainMenuController(menu, primaryStage);
-                Scene menuScene = new Scene(menu.getRoot(), 800, 600);
-                primaryStage.setScene(menuScene);
+                ((Stage) layout.getScene().getWindow()).close();
             }
-
 
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -125,13 +117,8 @@ public class EditProfileScreen {
                 resultat.showAndWait();
 
                 if (raderat) {
-                    if (raderat) {
-                        SessionManager.clearAktivtKontoID();
-                        SessionManager.setUsername(null);
-                        Main.visaStartScreen(primaryStage);
-                    }
-
-
+                    ((Stage) layout.getScene().getWindow()).close();
+                    SessionManager.clearAktivtKontoID();
                     // Navigera tillbaka till startskärm om önskas
                 }
             }

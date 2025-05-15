@@ -20,7 +20,7 @@ public class Main extends Application {
         visaStartScreen(primaryStage);
     }
 
-    // Visar StartScreen och kopplar knapparna
+    // ✅ Visar StartScreen och kopplar knapparna
     public static void visaStartScreen(Stage stage) {
         StartScreen startScreen = new StartScreen(stage);
         Scene scene = new Scene(startScreen.getRoot(), 500, 400);
@@ -63,40 +63,39 @@ public class Main extends Application {
         });
     }
 
-    // Visar RegisterScreen
+    // ✅ Visar RegisterScreen
     public static void visaRegistreringsskärm(Stage stage) {
-//        RegisterScreen registerScreen = new RegisterScreen(stage);
-        RegisterScreen registerScreen = new RegisterScreen(primaryStageRef); // 👈 använd det stora fönstret
-        Scene registerScene = new Scene(registerScreen.getRoot(), 400, 600);
-        primaryStageRef.setScene(registerScene);
-//
-//        registerScreen.getRegisterButton().setOnAction(regEvent -> {
-//            try {
-//                String namn = registerScreen.getNameField().getText();
-//                String efternamn = registerScreen.getLastnameField().getText();
-//                String epost = registerScreen.getEmailField().getText();
-//                String password = registerScreen.getPasswordField().getText();
-//                double vikt = Double.parseDouble(registerScreen.getWeightField().getText());
-//                String kön = registerScreen.getGenderField().getText();
-//                int dagligtMal = Integer.parseInt(registerScreen.getGoalField().getText());
-//
-//                Account account = new Account(namn, efternamn, epost, password, 0, vikt, kön, dagligtMal);
-//                AccountDAO accountDAO = new AccountDAO();
-//                boolean registrerad = accountDAO.registeraccount(account);
-//
-//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                alert.setTitle("Registrering");
-//                alert.setHeaderText(null);
-//                alert.setContentText(registrerad ? "Kontot har skapats!" : "Kunde inte skapa konto.");
-//                alert.showAndWait();
-//            } catch (Exception ex) {
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Fel");
-//                alert.setContentText("Fyll i alla fält korrekt.");
-//                alert.showAndWait();
-//            }
-//        });
+        RegisterScreen registerScreen = new RegisterScreen(primaryStageRef);
 
+        registerScreen.getRegisterButton().setOnAction(regEvent -> {
+            try {
+                String namn = registerScreen.getNameField().getText();
+                String efternamn = registerScreen.getLastnameField().getText();
+                String epost = registerScreen.getEmailField().getText();
+                String password = registerScreen.getPasswordField().getText();
+                double vikt = Double.parseDouble(registerScreen.getWeightField().getText());
+                String kön = registerScreen.getGenderField().getText();
+                int dagligtMal = Integer.parseInt(registerScreen.getGoalField().getText());
+
+                Account account = new Account(namn, efternamn, epost, password, 0, vikt, kön, dagligtMal);
+                AccountDAO accountDAO = new AccountDAO();
+                boolean registrerad = accountDAO.registeraccount(account);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Registrering");
+                alert.setHeaderText(null);
+                alert.setContentText(registrerad ? "Kontot har skapats!" : "Kunde inte skapa konto.");
+                alert.showAndWait();
+            } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Fel");
+                alert.setContentText("Fyll i alla fält korrekt.");
+                alert.showAndWait();
+            }
+        });
+
+        Scene registreringScene = new Scene(registerScreen.getRoot(), 400, 400);
+        stage.setScene(registreringScene);
     }
 
     public static Stage getPrimaryStage() {
