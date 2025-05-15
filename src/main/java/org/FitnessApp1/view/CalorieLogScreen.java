@@ -2,6 +2,7 @@ package org.FitnessApp1.view;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -11,6 +12,12 @@ import org.FitnessApp1.model.CalorieLogDAO;
 import org.FitnessApp1.model.Account;
 import org.FitnessApp1.model.AccountDAO;
 import org.FitnessApp1.model.SessionManager;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import org.FitnessApp1.Main;
+import org.FitnessApp1.controller.MainMenuController;
+
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -30,10 +37,32 @@ public class CalorieLogScreen {
     private Text procentText;
     private HBox kaloriProgressBox;
     private Map<String, Integer> loggTextTillID = new HashMap<>();
+    private BorderPane root;
 
     public CalorieLogScreen() {
         layout = new VBox(10);
         layout.setPadding(new Insets(20));
+
+        Image homeImage = new Image(getClass().getResourceAsStream("/images/home.png"));
+        ImageView homeIcon = new ImageView(homeImage);
+        homeIcon.setFitWidth(24);
+        homeIcon.setFitHeight(24);
+        homeIcon.setPreserveRatio(true);
+        homeIcon.setStyle("-fx-cursor: hand;");
+        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
+        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
+
+
+// Navigering tillbaka
+        homeIcon.setOnMouseClicked(e -> {
+            MainMenuScreen menuScreen = new MainMenuScreen(SessionManager.getUsername());
+            new MainMenuController(menuScreen, Main.getPrimaryStage());
+            Main.getPrimaryStage().setScene(new Scene(menuScreen.getRoot(), 800, 600));
+        });
+
+        root = new BorderPane();
+        root.setTop(homeIcon);
+        root.setCenter(layout);
 
         matField = new TextField();
         kalorierField = new TextField();
@@ -133,6 +162,7 @@ public class CalorieLogScreen {
             }
         });
 
+
         layout.getChildren().addAll(
                 new Label("Dagens totala kalorier:"), dagensSummaText,
                 new Label("Loggar för valt datum:"), loggLista,
@@ -149,7 +179,7 @@ public class CalorieLogScreen {
     }
 
     public Parent getRoot() {
-        return layout;
+        return root;
     }
 
     private void uppdateraDagensSumma() {

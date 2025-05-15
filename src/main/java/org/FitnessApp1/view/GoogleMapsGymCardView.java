@@ -60,4 +60,8 @@ public class GoogleMapsGymCardView extends ScrollPane {
             e.printStackTrace();
         }
     }
+
+    public ScrollPane getRoot() {
+        return this;
+    };
 }

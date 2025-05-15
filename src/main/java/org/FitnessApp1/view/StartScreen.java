@@ -3,18 +3,23 @@ package org.FitnessApp1.view;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.scene.layout.StackPane;
 
 public class StartScreen {
 
     private Button loginButton;
     private Button registerButton;
     private StackPane root;
+    private Stage stage;
 
-    public StartScreen() {
+    public StartScreen(Stage stage) {
+        this.stage = stage;
         buildUI();
     }
 
@@ -32,6 +37,19 @@ public class StartScreen {
 
         styleRoundedButton(loginButton);
         styleRoundedButton(registerButton);
+
+        loginButton.setOnAction(e -> {
+            LoginScreen loginScreen = new LoginScreen(stage);
+            Scene loginScene = new Scene(loginScreen.getRoot(), 300, 200);
+            stage.setScene(loginScene);
+        });
+//
+//        registerButton.setOnAction(e -> {
+//            RegisterScreen registerScreen = new RegisterScreen(stage);
+//            Scene registerScene = new Scene(registerScreen.getRoot(), 400, 500);
+//            stage.setScene(registerScene);
+//        });
+
 
         HBox buttonBox = new HBox(20, loginButton, registerButton);
         buttonBox.setAlignment(Pos.CENTER);

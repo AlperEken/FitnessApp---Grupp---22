@@ -6,14 +6,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+
 
 import javafx.stage.Stage;
+import org.FitnessApp1.Main;
 import org.FitnessApp1.model.Account;
 import org.FitnessApp1.model.AccountDAO;
 
 public class RegisterScreen {
 
-    private VBox layout;
+    private Parent layout;
     private ScrollPane scrollPane;
     private TextField nameField;
     private TextField lastnameField;
@@ -26,9 +32,10 @@ public class RegisterScreen {
     private Button registerButton;
     private Stage stage;
 
-    public RegisterScreen() {
-        layout = new VBox(10);
-        layout.setPadding(new Insets(30));
+    public RegisterScreen(Stage stage) {
+        this.stage = stage;
+        VBox formLayout = new VBox(10);
+        formLayout.setPadding(new Insets(30));
 
         nameField = new TextField();
         lastnameField = new TextField();
@@ -40,7 +47,17 @@ public class RegisterScreen {
         goalField = new TextField();
         registerButton = new Button("Skapa konto");
 
-        layout.getChildren().addAll(
+        Image homeImage = new Image(getClass().getResourceAsStream("/images/home.png"));
+        ImageView homeIcon = new ImageView(homeImage);
+        homeIcon.setFitWidth(24);
+        homeIcon.setFitHeight(24);
+        homeIcon.setPreserveRatio(true);
+        homeIcon.setStyle("-fx-cursor: hand;");
+        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
+        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
+        homeIcon.setOnMouseClicked(e -> Main.visaStartScreen(stage));
+
+        formLayout.getChildren().addAll(
                 new Label("Förnamn:"), nameField,
                 new Label("Efternamn:"), lastnameField,
                 new Label("E-post:"), emailField,
@@ -52,8 +69,17 @@ public class RegisterScreen {
                 registerButton
         );
 
-        scrollPane = new ScrollPane(layout);
+        // Efter formLayout är klar – då kommer BorderPane:
+        BorderPane root = new BorderPane();
+        root.setTop(homeIcon);
+        root.setCenter(formLayout);
+
+      // Lägg allt i scroll och spara i layout
+        scrollPane = new ScrollPane(root);
         scrollPane.setFitToWidth(true);
+        layout = scrollPane;
+
+
 
         // När användaren trycker på register knappen
         registerButton.setOnAction(event -> {
@@ -80,11 +106,11 @@ public class RegisterScreen {
                     alert.setContentText("Ditt konto har skapats!");
                     alert.showAndWait();
 
-                    // Stäng detta fönster
-                    closeRegisterWindow();
+//                    Stäng detta fönster
+//                    closeRegisterWindow();
 
                     // Öppna login screen
-                    openLoginScreen();
+                    Main.visaStartScreen(stage);
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Fel");
@@ -97,13 +123,14 @@ public class RegisterScreen {
                 alert.setTitle("Fel");
                 alert.setContentText("Fyll i alla fält korrekt.");
                 alert.showAndWait();
+
             }
         });
     }
 
     // Öppna login screen
     private void openLoginScreen() {
-        LoginScreen loginScreen = new LoginScreen(); // Se till att skapa LoginScreen om den inte finns
+        LoginScreen loginScreen = new LoginScreen(stage); // Se till att skapa LoginScreen om den inte finns
         Stage loginStage = new Stage();
         loginStage.setTitle("Logga in");
         loginStage.setScene(new Scene(loginScreen.getRoot(), 300, 200)); // Justera storlek
