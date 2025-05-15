@@ -73,6 +73,27 @@ public class StatisticScreen {
         stage.show();
     }
 
+//    private void showCalorieData() {
+//        int kontoID = SessionManager.getAktivtKontoID();
+//        if (kontoID == -1) return;
+//
+//        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
+//        LocalDate endDate = LocalDate.now();
+//
+//        CalorieLogDAO dao = new CalorieLogDAO();
+//        List<CalorieLog> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
+//
+//        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+//        series.setName("Kalorier");
+//
+//        for (CalorieLog logg : logs) {
+//            int days = logg.getDatum().getDayOfMonth();
+//            series.getData().add(new XYChart.Data<>(days, logg.getKalorier()));
+//        }
+//
+//        calorieChart.getData().add(series);
+//    }
+
     private void showCalorieData() {
         int kontoID = SessionManager.getAktivtKontoID();
         if (kontoID == -1) return;
@@ -99,4 +120,5 @@ public class StatisticScreen {
 
         calorieChart.getData().add(series);
     }
+
 }
