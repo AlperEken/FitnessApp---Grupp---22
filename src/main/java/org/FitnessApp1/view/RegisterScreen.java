@@ -26,7 +26,7 @@ public class RegisterScreen {
     private Button registerButton;
     private Stage stage;
 
-    public RegisterScreen() {
+    public RegisterScreen(Stage primaryStageRef) {
         layout = new VBox(10);
         layout.setPadding(new Insets(30));
 
