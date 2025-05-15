@@ -15,6 +15,8 @@ import org.FitnessApp1.model.SessionManager;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class StatisticScreen {
 
@@ -27,15 +29,27 @@ public class StatisticScreen {
         layout.setPadding(new Insets(20));
         layout.setStyle("-fx-alignment: center;");
 
-        // Skapa X- och Y-axlar för grafen
-        NumberAxis xAxis = new NumberAxis();
-        NumberAxis yAxis = new NumberAxis();
+        // Dynamiskt intervall beroende på antal dagar i månaden
+        int maxDaysInMonth = LocalDate.now().lengthOfMonth();
+
+        // Skapa X- och Y-axlar med fasta heltal från 1 till 30/31
+        NumberAxis xAxis = new NumberAxis(1, maxDaysInMonth, 1);
         xAxis.setLabel("Dagar");
+        xAxis.setTickUnit(1);
+        xAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(xAxis) {
+            @Override
+            public String toString(Number object) {
+                return String.format("%.0f", object.doubleValue());
+            }
+        });
+
+        NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Kalorier");
 
         // Skapa linjediagrammet
         calorieChart = new LineChart<>(xAxis, yAxis);
         calorieChart.setTitle("Kalorier per dag");
+        calorieChart.setCreateSymbols(false); // Ta bort punkter, visa endast linje
 
         // Visa data
         showCalorieData();
@@ -69,12 +83,18 @@ public class StatisticScreen {
         KaloriLoggDAO dao = new KaloriLoggDAO();
         List<KaloriLogg> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
 
+        // Gruppera kalorier per dag (summera vid flera poster samma dag)
+        Map<Integer, Integer> kalorierPerDag = new TreeMap<>();
+        for (KaloriLogg logg : logs) {
+            int dag = logg.getDatum().getDayOfMonth();
+            kalorierPerDag.put(dag, kalorierPerDag.getOrDefault(dag, 0) + logg.getKalorier());
+        }
+
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Kalorier");
 
-        for (KaloriLogg logg : logs) {
-            int days = logg.getDatum().getDayOfMonth();
-            series.getData().add(new XYChart.Data<>(days, logg.getKalorier()));
+        for (Map.Entry<Integer, Integer> entry : kalorierPerDag.entrySet()) {
+            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
         }
 
         calorieChart.getData().add(series);
