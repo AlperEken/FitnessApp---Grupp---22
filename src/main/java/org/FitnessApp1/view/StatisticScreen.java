@@ -9,6 +9,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.FitnessApp1.Main;
 import org.FitnessApp1.model.CalorieLog;
 import org.FitnessApp1.model.CalorieLogDAO;
 import org.FitnessApp1.model.SessionManager;
@@ -65,12 +66,11 @@ public class StatisticScreen {
         return layout;
     }
 
-    public void showInNewWindow() {
-        Stage stage = new Stage();
-        stage.setTitle("Statistik");
-        Scene scene = new Scene(getRoot(), 800, 600);
-        stage.setScene(scene);
-        stage.show();
+    public void showInPrimaryWindow() {
+        StatisticScreen statScreen = new StatisticScreen();
+        Scene statScene = new Scene(statScreen.getRoot(), 800, 600);
+        Main.getPrimaryStage().setScene(statScene);
+
     }
 
 //    private void showCalorieData() {

@@ -25,7 +25,7 @@ public class EditProfileScreen {
 
     private final Account originalAccount;
 
-    public EditProfileScreen(Account account) {
+    public EditProfileScreen(Account account, Stage primaryStage) {
         this.originalAccount = account;
 
         layout = new VBox(10);

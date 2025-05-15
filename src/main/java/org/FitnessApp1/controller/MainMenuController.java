@@ -58,14 +58,9 @@ public class MainMenuController {
             Account account = accountDAO.getAccountByID(kontoID);
 
             if (account != null) {
-//<<<<<<< HEAD
                 EditProfileScreen editProfileScreen = new EditProfileScreen(account, primaryStage);
                 Scene scene = new Scene(editProfileScreen.getRoot(), 400, 550);
                 primaryStage.setScene(scene);
-//=======
-//                EditProfileScreen editProfileScreen = new EditProfileScreen(account);
-//                editProfileScreen.visaFönster();
-//>>>>>>> cc9002cf397e9dd5d406e310bdb7775055d8dfc6
             } else {
                 System.out.println("Konto hittades inte.");
             }
