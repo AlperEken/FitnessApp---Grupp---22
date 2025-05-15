@@ -8,8 +8,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
 
 import javafx.stage.Stage;
-import org.FitnessApp1.model.Konto;
-import org.FitnessApp1.model.KontoDAO;
+import org.FitnessApp1.model.Account;
+import org.FitnessApp1.model.AccountDAO;
 
 public class RegisterScreen {
 
@@ -68,11 +68,11 @@ public class RegisterScreen {
                 int goal = Integer.parseInt(goalField.getText());
 
                 // Skapa konto objekt
-                Konto konto = new Konto(name, lastname, email, password, age, weight, gender, goal);
+                Account account = new Account(name, lastname, email, password, age, weight, gender, goal);
 
                 // Spara kontot i databasen via DAO
-                KontoDAO kontoDAO = new KontoDAO();
-                boolean isCreated = kontoDAO.registeraccount(konto);
+                AccountDAO accountDAO = new AccountDAO();
+                boolean isCreated = accountDAO.registeraccount(account);
 
                 if (isCreated) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);

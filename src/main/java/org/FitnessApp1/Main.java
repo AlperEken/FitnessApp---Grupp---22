@@ -5,8 +5,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.FitnessApp1.controller.MainMenuController;
 import org.FitnessApp1.view.*;
-import org.FitnessApp1.model.KontoDAO;
-import org.FitnessApp1.model.Konto;
+import org.FitnessApp1.model.AccountDAO;
+import org.FitnessApp1.model.Account;
 import org.FitnessApp1.model.SessionManager;
 import javafx.scene.control.Alert;
 
@@ -37,13 +37,13 @@ public class Main extends Application {
                 String email = loginScreen.getEmailField().getText();
                 String password = loginScreen.getPasswordField().getText();
 
-                KontoDAO kontoDAO = new KontoDAO();
-                boolean isLoggedIn = kontoDAO.valideraInloggning(email, password);
+                AccountDAO accountDAO = new AccountDAO();
+                boolean isLoggedIn = accountDAO.valideraInloggning(email, password);
 
                 if (isLoggedIn) {
-                    String namn = kontoDAO.getNameByEmail(email);
+                    String namn = accountDAO.getNameByEmail(email);
                     if (namn != null) {
-                        int kontoID = kontoDAO.getAcoountIDByEmail(email);
+                        int kontoID = accountDAO.getAcoountIDByEmail(email);
                         SessionManager.setAktivtKontoID(kontoID);
                         SessionManager.setUsername(namn);
 
@@ -77,9 +77,9 @@ public class Main extends Application {
                 String kön = registerScreen.getGenderField().getText();
                 int dagligtMal = Integer.parseInt(registerScreen.getGoalField().getText());
 
-                Konto konto = new Konto(namn, efternamn, epost, password, 0, vikt, kön, dagligtMal);
-                KontoDAO kontoDAO = new KontoDAO();
-                boolean registrerad = kontoDAO.registeraccount(konto);
+                Account account = new Account(namn, efternamn, epost, password, 0, vikt, kön, dagligtMal);
+                AccountDAO accountDAO = new AccountDAO();
+                boolean registrerad = accountDAO.registeraccount(account);
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Registrering");
