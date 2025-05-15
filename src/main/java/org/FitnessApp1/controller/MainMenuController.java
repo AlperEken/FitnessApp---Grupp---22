@@ -9,6 +9,7 @@ import org.FitnessApp1.model.Account;
 import org.FitnessApp1.model.AccountDAO;
 import org.FitnessApp1.model.SessionManager;
 import org.FitnessApp1.view.*;
+import org.FitnessApp1.view.EditProfileScreen;
 
 public class MainMenuController {
 
@@ -32,10 +33,12 @@ public class MainMenuController {
         });
 
         view.getCalorieLogButton().setOnAction(e -> {
+
             CalorieLogScreen screen = new CalorieLogScreen();
             Scene scene = new Scene(screen.getRoot(), 600, 500);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Logga kalorier");
+
         });
 
         view.getLoggaUtButton().setOnAction(e -> {
@@ -58,9 +61,14 @@ public class MainMenuController {
             Account account = accountDAO.getAccountByID(kontoID);
 
             if (account != null) {
+//<<<<<<< HEAD
                 EditProfileScreen editProfileScreen = new EditProfileScreen(account, primaryStage);
                 Scene scene = new Scene(editProfileScreen.getRoot(), 400, 550);
                 primaryStage.setScene(scene);
+//=======
+//                EditProfileScreen editProfileScreen = new EditProfileScreen(account);
+//                editProfileScreen.visaFönster();
+//>>>>>>> cc9002cf397e9dd5d406e310bdb7775055d8dfc6
             } else {
                 System.out.println("Konto hittades inte.");
             }
