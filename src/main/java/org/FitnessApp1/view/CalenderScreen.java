@@ -119,11 +119,22 @@ public class CalenderScreen {
         btnSpara.setOnAction(e -> {
             String text = anteckningArea.getText().trim();
             if (!text.isEmpty()) {
-                calendarDAO.saveOrUpdate(datum, text);
+                boolean success = calendarDAO.saveOrUpdate(datum, text);
+                if (success) {
+                    stage.close();
+                    visaInfo("Anteckningen för " + datum + " har sparats.");
+                } else {
+                    visaInfo("Kunde inte spara anteckningen. Försök igen.");
+                }
             } else {
-                calendarDAO.deleteNote(datum);
+                boolean success = calendarDAO.deleteNote(datum);
+                if (success) {
+                    stage.close();
+                    visaInfo("Anteckningen för " + datum + " har tagits bort.");
+                } else {
+                    visaInfo("Kunde inte ta bort anteckningen. Försök igen.");
+                }
             }
-            stage.close();
         });
 
         btnAvbryt.setOnAction(e -> stage.close());
