@@ -68,7 +68,20 @@ public class MainMenuController {
 
         view.getKalenderButton().setOnAction(e -> {
             CalenderScreen calenderScreen = new CalenderScreen();
-            calenderScreen.visaFönster();
+            Scene scene = new Scene(calenderScreen.getCalendarView(), 800, 600);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Kalender");
         });
+
+
     }
+
+
+
+
+
+
+
+
+
 }

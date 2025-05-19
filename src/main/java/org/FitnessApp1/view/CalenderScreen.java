@@ -1,174 +1,155 @@
 package org.FitnessApp1.view;
 
+import com.calendarfx.view.CalendarView;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.FitnessApp1.controller.CalendarController;
+import org.FitnessApp1.model.CalendarDAO;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.DayOfWeek;
 
 public class CalenderScreen {
 
-    private YearMonth aktuellMånad;
-    private GridPane kalenderGrid;
-    private Label månadLabel;
-    private VBox root;
-    private CalendarController calendarController;
-    private LocalDate valdDag;
+    private final CalendarView calendarView;
+    private final CalendarDAO calendarDAO;
+    private Label selectedDateLabel;
 
     public CalenderScreen() {
-        aktuellMånad = YearMonth.now(); // Starta med nuvarande månad
-        skapaKalender();
-    }
+        calendarDAO = new CalendarDAO();
 
-    public void visaFönster() {
+        calendarView = new CalendarView();
+        calendarView.setShowAddCalendarButton(false);
+        calendarView.setShowSearchField(false);
+        calendarView.setShowPageSwitcher(true);
+        calendarView.setShowPrintButton(false);
+        calendarView.setShowDeveloperConsole(false);
+
+        calendarView.showMonthPage();
+
+        selectedDateLabel = new Label("Valt datum: -");
+
+        // Uppdatera label när datum ändras
+        calendarView.dateProperty().addListener((obs, oldDate, newDate) -> {
+            if (newDate != null) {
+                selectedDateLabel.setText("Valt datum: " + newDate);
+            }
+        });
+
+        // Knapp för att skapa ny anteckning på valt datum
+        Button btnNyAnteckning = new Button("Ny anteckning");
+        btnNyAnteckning.setOnAction(e -> {
+            LocalDate date = calendarView.getDate();
+            if (date != null) {
+                visaFönster(date);
+            }
+        });
+
+        // Knapp för att visa befintlig anteckning (om någon) på valt datum
+        Button btnVisaAnteckning = new Button("Visa anteckning");
+        btnVisaAnteckning.setOnAction(e -> {
+            LocalDate date = calendarView.getDate();
+            if (date != null) {
+                String note = calendarDAO.getNoteForDate(date);
+                if (note != null && !note.isEmpty()) {
+                    visaFönster(date);
+                } else {
+                    visaInfo("Ingen anteckning för datum: " + date);
+                }
+            }
+        });
+
+        // Ny knapp för att ta bort anteckning
+        Button btnTaBortAnteckning = new Button("Ta bort anteckning");
+        btnTaBortAnteckning.setOnAction(e -> {
+            LocalDate date = calendarView.getDate();
+            if (date != null) {
+                String note = calendarDAO.getNoteForDate(date);
+                if (note != null && !note.isEmpty()) {
+                    calendarDAO.deleteNote(date);
+                    visaInfo("Anteckningen för " + date + " är borttagen.");
+                } else {
+                    visaInfo("Ingen anteckning att ta bort för datum: " + date);
+                }
+            }
+        });
+
+        HBox buttonsBox = new HBox(10, btnNyAnteckning, btnVisaAnteckning, btnTaBortAnteckning);
+        buttonsBox.setPadding(new Insets(10));
+
+        VBox root = new VBox(10, selectedDateLabel, buttonsBox, calendarView);
+        root.setPadding(new Insets(10));
+
+        // Skapa och visa scenen (om du vill visa i egen scen)
         Stage stage = new Stage();
-        Scene scene = new Scene(root, 500, 400);
         stage.setTitle("Kalender");
-        stage.setScene(scene);
+        stage.setScene(new Scene(root, 800, 600));
         stage.show();
     }
 
-    private void skapaKalender() {
-        root = new VBox(20); // lite mer spacing
-        root.setPadding(new Insets(20));
-        root.setAlignment(Pos.TOP_CENTER);
-
-        HBox header = new HBox(10);
-        header.setAlignment(Pos.CENTER);
-
-        Button föregåendeMånad = new Button("<");
-        Button nästaMånad = new Button(">");
-        månadLabel = new Label();
-        uppdateraMånadLabel();
-
-        föregåendeMånad.setOnAction(e -> {
-            aktuellMånad = aktuellMånad.minusMonths(1);
-            uppdateraKalender();
-        });
-
-        nästaMånad.setOnAction(e -> {
-            aktuellMånad = aktuellMånad.plusMonths(1);
-            uppdateraKalender();
-        });
-
-        header.getChildren().addAll(föregåendeMånad, månadLabel, nästaMånad);
-
-        kalenderGrid = new GridPane();
-        kalenderGrid.setHgap(5);
-        kalenderGrid.setVgap(5);
-        kalenderGrid.setAlignment(Pos.CENTER);
-
-        // Skapa knapp-rad
-        HBox knappRad = new HBox(10);
-        knappRad.setAlignment(Pos.CENTER);
-
-        Button läggTillKnapp = new Button("Lägg till / ändra anteckning");
-        Button taBortKnapp = new Button("Ta bort anteckning");
-        Button visaKnapp = new Button("Visa anteckning");
-
-        knappRad.getChildren().addAll(läggTillKnapp, taBortKnapp, visaKnapp);
-
-        // Funktionalitet
-        läggTillKnapp.setOnAction(e -> {
-            if (valdDag != null) {
-                calendarController.visaAnteckningsDialog(valdDag);
-            } else {
-                visaFelmeddelande("Välj ett datum först.");
-            }
-        });
-
-        taBortKnapp.setOnAction(e -> {
-            if (valdDag != null) {
-                calendarController.taBortAnteckning(valdDag);
-            } else {
-                visaFelmeddelande("Välj ett datum först.");
-            }
-        });
-
-        visaKnapp.setOnAction(e -> {
-            if (valdDag != null) {
-                calendarController.visaBefintligAnteckning(valdDag);
-            } else {
-                visaFelmeddelande("Välj ett datum först.");
-            }
-        });
-
-        // Lägg till allt i root – nu med knappRad!
-        root.getChildren().addAll(header, kalenderGrid, knappRad);
-
-        fyllKalender();
+    /** Returnerar kalender-noden för inbäddning (om du vill bädda in i annan scen) */
+    public CalendarView getCalendarView() {
+        return calendarView;
     }
 
-    private void uppdateraKalender() {
-        kalenderGrid.getChildren().clear();
-        uppdateraMånadLabel();
-        fyllKalender();
-    }
+    public void visaFönster(LocalDate datum) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Anteckning för " + datum);
 
-    private void uppdateraMånadLabel() {
-        månadLabel.setText(aktuellMånad.getMonth() + " " + aktuellMånad.getYear());
-    }
+        Label label = new Label("Datum: " + datum);
 
-    private void fyllKalender() {
-        // Veckodagsrubriker
-        DayOfWeek[] dagar = DayOfWeek.values();
-        for (int i = 0; i < 7; i++) {
-            Label label = new Label(dagar[i].toString().substring(0, 3));
-            kalenderGrid.add(label, i, 0);
+        TextArea anteckningArea = new TextArea();
+        anteckningArea.setWrapText(true);
+
+        String existingNote = calendarDAO.getNoteForDate(datum);
+        if (existingNote != null) {
+            anteckningArea.setText(existingNote);
         }
 
-        LocalDate förstaDag = aktuellMånad.atDay(1);
-        int startKolumn = förstaDag.getDayOfWeek().getValue() % 7;
-        int antalDagar = aktuellMånad.lengthOfMonth();
+        Button btnSpara = new Button("Spara");
+        Button btnAvbryt = new Button("Avbryt");
 
-        int rad = 1;
-        int kolumn = startKolumn;
-
-
-        for (int dag = 1; dag <= antalDagar; dag++) {
-            LocalDate dagensDatum = aktuellMånad.atDay(dag);
-            Button dagKnapp = new Button(String.valueOf(dag));
-            dagKnapp.setPrefSize(50, 50);
-
-            // Färgmarkera om det finns en anteckning
-            if (CalendarController.harAnteckning(dagensDatum)) {
-                dagKnapp.setStyle("-fx-background-color: lightgreen;");
+        btnSpara.setOnAction(e -> {
+            String text = anteckningArea.getText().trim();
+            if (!text.isEmpty()) {
+                calendarDAO.saveOrUpdate(datum, text);
+            } else {
+                calendarDAO.deleteNote(datum);
             }
+            stage.close();
+        });
 
-            // Färgmarkera vald dag
-            if (dagensDatum.equals(valdDag)) {
-                dagKnapp.setStyle("-fx-background-color: deepskyblue; -fx-text-fill: white;");
-            }
+        btnAvbryt.setOnAction(e -> stage.close());
 
-            dagKnapp.setOnAction(e -> {
-                valdDag = dagensDatum;
-                uppdateraKalender(); // Rita om kalendern så färgen uppdateras
-            });
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(10));
+        layout.getChildren().addAll(label, anteckningArea, btnSpara, btnAvbryt);
 
-            kalenderGrid.add(dagKnapp, kolumn, rad);
-
-            kolumn++;
-            if (kolumn > 6) {
-                kolumn = 0;
-                rad++;
-            }
-        }
-
-
+        Scene scene = new Scene(layout, 400, 300);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
-    private void visaFelmeddelande(String meddelande) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
-        alert.setTitle("Fel");
-        alert.setHeaderText(null);
-        alert.setContentText(meddelande);
-        alert.showAndWait();
+    private void visaInfo(String message) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Information");
+
+        Label label = new Label(message);
+        Button btnOk = new Button("OK");
+        btnOk.setOnAction(e -> stage.close());
+
+        VBox layout = new VBox(10, label, btnOk);
+        layout.setPadding(new Insets(10));
+
+        stage.setScene(new Scene(layout, 300, 150));
+        stage.showAndWait();
     }
 }
