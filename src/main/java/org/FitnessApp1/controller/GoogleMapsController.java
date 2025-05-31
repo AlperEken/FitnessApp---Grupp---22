@@ -30,25 +30,15 @@ public class GoogleMapsController {
                 new GymLocation("Klagshamns Utegym", 55.52426537206233, 12.90199449449149, "/images/Klagshamn.png"),
                 new GymLocation("Nydala Utegym", 55.572282959713085, 13.018263558377786, "/images/Nydalaparken.png")
         );
-        GoogleMapsGymCardView view = new GoogleMapsGymCardView(gyms);
-        Image homeImage = new Image(getClass().getResourceAsStream("/images/home.png"));
-        ImageView homeIcon = new ImageView(homeImage);
-        homeIcon.setFitWidth(24);
-        homeIcon.setFitHeight(24);
-        homeIcon.setPreserveRatio(true);
-        homeIcon.setStyle("-fx-cursor: hand;");
-        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
-        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
-
-        homeIcon.setOnMouseClicked(e -> {
+        GoogleMapsGymCardView view = new GoogleMapsGymCardView(gyms, () -> {
             MainMenuScreen mainMenuScreen = new MainMenuScreen(SessionManager.getUsername());
-            new MainMenuController(mainMenuScreen, primaryStage);
-            Scene mainScene = new Scene(mainMenuScreen.getRoot(), 800, 600);
-            primaryStage.setScene(mainScene);
+            MainMenuController mainMenuController = new MainMenuController(mainMenuScreen, primaryStage);
+            Scene scene = new Scene(mainMenuScreen.getRoot(), 800, 600);
+            primaryStage.setScene(scene);
         });
 
+
         BorderPane root = new BorderPane();
-        root.setTop(homeIcon);
         root.setCenter(view.getRoot()); // 👈 ScrollPane från vyklassen
 
         Scene scene = new Scene(root, 800, 600);

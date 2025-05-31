@@ -7,14 +7,13 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.FitnessApp1.Main;
 import org.FitnessApp1.controller.MainMenuController;
 import org.FitnessApp1.model.CalorieLog;
@@ -22,29 +21,84 @@ import org.FitnessApp1.model.CalorieLogDAO;
 import org.FitnessApp1.model.SessionManager;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class StatisticScreen {
 
-    private VBox layout;
-    private Button backButton;
-    private LineChart<Number, Number> calorieChart;
-    private BorderPane root;
+    private final BorderPane root;
+    private final VBox layout;
+    private final LineChart<Number, Number> calorieChart;
+    private final ComboBox<YearMonth> monthSelector;
+    private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("sv"));
 
     public StatisticScreen() {
-        layout = new VBox(15);
-        layout.setPadding(new Insets(20));
-        layout.setStyle("-fx-alignment: center;");
+        // === Root och layout ===
+        root = new BorderPane();
+        root.setStyle("-fx-background-color: linear-gradient(white, #e6f0ff);");
 
-        // Dynamiskt intervall beroende på antal dagar i månaden
-        int maxDaysInMonth = LocalDate.now().lengthOfMonth();
+        layout = new VBox(20);
+        layout.setPadding(new Insets(40));
+        layout.setAlignment(Pos.TOP_CENTER);
 
-        // Skapa X- och Y-axlar med fasta heltal från 1 till 30/31
-        NumberAxis xAxis = new NumberAxis(1, maxDaysInMonth, 1);
+        // === Header ===
+        HBox header = new HBox(15);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
+        homeIcon.setFitWidth(30);
+        homeIcon.setFitHeight(30);
+        homeIcon.setStyle("-fx-cursor: hand;");
+        homeIcon.setOnMouseClicked(e -> {
+            MainMenuScreen menuScreen = new MainMenuScreen(SessionManager.getUsername());
+            new MainMenuController(menuScreen, Main.getPrimaryStage());
+            Main.getPrimaryStage().setScene(new Scene(menuScreen.getRoot(), 800, 600));
+        });
+
+        VBox titleBox = new VBox(3);
+        Label title = new Label("Statistik");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        title.setStyle("-fx-text-fill: #1A3E8B;");
+        Label subtitle = new Label("Se din utveckling av kaloriintag över tid.");
+        subtitle.setFont(Font.font("Arial", 14));
+        subtitle.setStyle("-fx-text-fill: #555;");
+        titleBox.getChildren().addAll(title, subtitle);
+
+        header.getChildren().addAll(homeIcon, titleBox);
+
+        // === Månadsväljare ===
+        Label monthLabel = new Label("Välj månad:");
+        monthLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        monthLabel.setStyle("-fx-text-fill: #333;");
+        monthSelector = new ComboBox<>();
+        monthSelector.setStyle("""
+    -fx-background-color: #1A3E8B;
+    -fx-background-radius: 20px;
+    -fx-padding: 6 16 6 16;
+""");
+
+        monthSelector.setButtonCell(new ComboBoxCell(true)); // vit text i "knappen"
+        monthSelector.setCellFactory(param -> new ComboBoxCell(false)); // svart text i listan
+
+
+
+        // Fyll senaste 12 månader
+        YearMonth currentMonth = YearMonth.now();
+        for (int i = 0; i < 12; i++) {
+            YearMonth ym = currentMonth.minusMonths(i);
+            monthSelector.getItems().add(ym);
+        }
+
+        monthSelector.setValue(currentMonth);
+        monthSelector.setOnAction(e -> showCalorieData());
+
+        VBox monthBox = new VBox(5, monthLabel, monthSelector);
+        monthBox.setAlignment(Pos.CENTER_LEFT);
+
+        // === Axlar och diagram ===
+        NumberAxis xAxis = new NumberAxis(1, currentMonth.lengthOfMonth(), 1);
         xAxis.setLabel("Dagar");
-        xAxis.setTickUnit(1);
         xAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(xAxis) {
             @Override
             public String toString(Number object) {
@@ -55,52 +109,22 @@ public class StatisticScreen {
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Kalorier");
 
-        // Skapa linjediagrammet
         calorieChart = new LineChart<>(xAxis, yAxis);
         calorieChart.setTitle("Kalorier per dag");
-        calorieChart.setCreateSymbols(false); // Ta bort punkter, visa endast linje
+        calorieChart.setCreateSymbols(false);
+        calorieChart.setLegendVisible(false);
+        calorieChart.setStyle("""
+            -fx-background-color: white;
+            -fx-background-radius: 12px;
+            -fx-border-radius: 12px;
+            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2);
+        """);
+        calorieChart.setMinHeight(400);
 
-        // Visa data
         showCalorieData();
 
-        Image homeImage = new Image(getClass().getResourceAsStream("/images/home.png"));
-        ImageView homeIcon = new ImageView(homeImage);
-        homeIcon.setFitWidth(24);
-        homeIcon.setFitHeight(24);
-        homeIcon.setPreserveRatio(true);
-        homeIcon.setStyle("-fx-cursor: hand;");
-        homeIcon.setOnMouseClicked(e -> {
-            MainMenuScreen menuScreen = new MainMenuScreen(SessionManager.getUsername());
-            new MainMenuController(menuScreen, Main.getPrimaryStage());
-            Main.getPrimaryStage().setScene(new Scene(menuScreen.getRoot(), 800, 600));
-        });
-
-// Layout
-//        layout.getChildren().add(calorieChart);
-
-        root = new BorderPane();
+        layout.getChildren().addAll(header, monthBox, calorieChart);
         root.setCenter(layout);
-
-        HBox bottomBox = new HBox(homeIcon);
-        bottomBox.setPadding(new Insets(10));
-        bottomBox.setStyle("-fx-alignment: center;");
-        bottomBox.setPadding(new Insets(60, 0, 60, 0));
-        root.setBottom(bottomBox);
-        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
-        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
-
-        Label homeLabel = new Label("↩ Hem");
-        homeLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #555;");
-        homeLabel.setOnMouseClicked(homeIcon.getOnMouseClicked()); // klickbar text också
-
-        VBox homeBox = new VBox(5, homeIcon, homeLabel);
-        homeBox.setAlignment(Pos.CENTER);
-        homeBox.setPadding(new Insets(10, 0, 0, 0));
-
-
-        layout.getChildren().addAll(calorieChart, homeBox);
-        root.setCenter(layout);
-
     }
 
     public Parent getRoot() {
@@ -108,44 +132,20 @@ public class StatisticScreen {
     }
 
     public void showInPrimaryWindow() {
-        StatisticScreen statScreen = new StatisticScreen();
-        Scene statScene = new Scene(statScreen.getRoot(), 800, 600);
+        Scene statScene = new Scene(getRoot(), 800, 600);
         Main.getPrimaryStage().setScene(statScene);
-
     }
 
-//    private void showCalorieData() {
-//        int kontoID = SessionManager.getAktivtKontoID();
-//        if (kontoID == -1) return;
-//
-//        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
-//        LocalDate endDate = LocalDate.now();
-//
-//        CalorieLogDAO dao = new CalorieLogDAO();
-//        List<CalorieLog> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
-//
-//        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-//        series.setName("Kalorier");
-//
-//        for (CalorieLog logg : logs) {
-//            int days = logg.getDatum().getDayOfMonth();
-//            series.getData().add(new XYChart.Data<>(days, logg.getKalorier()));
-//        }
-//
-//        calorieChart.getData().add(series);
-//    }
-
     private void showCalorieData() {
+        YearMonth selectedMonth = monthSelector.getValue();
         int kontoID = SessionManager.getAktivtKontoID();
         if (kontoID == -1) return;
 
-        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
-        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = selectedMonth.atDay(1);
+        LocalDate endDate = selectedMonth.atEndOfMonth();
 
-        CalorieLogDAO dao = new CalorieLogDAO();
-        List<CalorieLog> logs = dao.getLogsForDateRange(startDate, endDate, kontoID);
+        List<CalorieLog> logs = new CalorieLogDAO().getLogsForDateRange(startDate, endDate, kontoID);
 
-        // Gruppera kalorier per dag (summera vid flera poster samma dag)
         Map<Integer, Integer> kalorierPerDag = new TreeMap<>();
         for (CalorieLog logg : logs) {
             int dag = logg.getDatum().getDayOfMonth();
@@ -153,13 +153,39 @@ public class StatisticScreen {
         }
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName("Kalorier");
-
-        for (Map.Entry<Integer, Integer> entry : kalorierPerDag.entrySet()) {
-            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        for (int i = 1; i <= selectedMonth.lengthOfMonth(); i++) {
+            series.getData().add(new XYChart.Data<>(i, kalorierPerDag.getOrDefault(i, 0)));
         }
 
+        calorieChart.getData().clear();
+        calorieChart.getXAxis().setAutoRanging(false);
+        ((NumberAxis) calorieChart.getXAxis()).setUpperBound(selectedMonth.lengthOfMonth());
         calorieChart.getData().add(series);
     }
+
+    private static class ComboBoxCell extends javafx.scene.control.ListCell<YearMonth> {
+        private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("sv"));
+        private final boolean isButton;
+
+        public ComboBoxCell(boolean isButton) {
+            this.isButton = isButton;
+        }
+
+        @Override
+        protected void updateItem(YearMonth item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+            } else {
+                setText(item.format(formatter));
+                if (isButton) {
+                    setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+                } else {
+                    setStyle("-fx-text-fill: black; -fx-font-weight: normal;");
+                }
+            }
+        }
+    }
+
 
 }
