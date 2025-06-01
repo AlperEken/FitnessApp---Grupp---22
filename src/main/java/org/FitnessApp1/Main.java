@@ -20,7 +20,7 @@ public class Main extends Application {
         visaStartScreen(primaryStage);
     }
 
-    // ✅ Visar StartScreen och kopplar knapparna
+
     public static void visaStartScreen(Stage stage) {
         StartScreen startScreen = new StartScreen(stage);
         Scene scene = new Scene(startScreen.getRoot(), 500, 400);
@@ -30,7 +30,9 @@ public class Main extends Application {
 
         startScreen.getLoginButton().setOnAction(e -> {
             LoginScreen loginScreen = new LoginScreen(stage);
-            Scene loginScene = new Scene(loginScreen.getRoot(), 400, 300);
+            Scene loginScene = new Scene(loginScreen.getRoot(), 600, 550);
+            stage.setScene(loginScene);
+            stage.centerOnScreen(); // Centrera fönstret på skärmen
             stage.setScene(loginScene);
 
             loginScreen.getLoginButton().setOnAction(loginEvent -> {
@@ -63,7 +65,7 @@ public class Main extends Application {
         });
     }
 
-    // ✅ Visar RegisterScreen
+
     public static void visaRegistreringsskärm(Stage stage) {
         RegisterScreen registerScreen = new RegisterScreen(primaryStageRef);
 
@@ -94,8 +96,10 @@ public class Main extends Application {
             }
         });
 
-        Scene registreringScene = new Scene(registerScreen.getRoot(), 400, 400);
+        Scene registreringScene = new Scene(registerScreen.getRoot(), 600, 600);
         stage.setScene(registreringScene);
+        stage.centerOnScreen();
+
     }
 
     public static Stage getPrimaryStage() {

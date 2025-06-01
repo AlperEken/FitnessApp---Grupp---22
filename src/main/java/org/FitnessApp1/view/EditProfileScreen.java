@@ -77,8 +77,13 @@ public class EditProfileScreen {
         saveButton = new Button("Spara");
         deleteButton = new Button("Radera konto");
 
-        saveButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6;");
-        deleteButton.setStyle("-fx-background-color: lightgray; -fx-background-radius: 6;");
+        saveButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;");
+        saveButton.setOnMouseEntered(e -> saveButton.setStyle("-fx-background-color: #0F2A5C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
+        saveButton.setOnMouseExited(e -> saveButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
+
+        deleteButton.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;");
+        deleteButton.setOnMouseEntered(e -> deleteButton.setStyle("-fx-background-color: #B71C1C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
+        deleteButton.setOnMouseExited(e -> deleteButton.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
 
         layout.getChildren().addAll(
                 new Label("Förnamn:"), nameField,
@@ -95,11 +100,16 @@ public class EditProfileScreen {
         saveButton.setOnAction(e -> sparaÄndringar());
         deleteButton.setOnAction(e -> raderaKonto());
 
-        VBox centeredCard = new VBox(layout);
+        ScrollPane scrollPane = new ScrollPane(layout);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background-color:transparent;");
+
+        VBox centeredCard = new VBox(scrollPane);
         centeredCard.setAlignment(Pos.CENTER);
 
         root.setTop(header);
         root.setCenter(centeredCard);
+
     }
 
     private void sparaÄndringar() {

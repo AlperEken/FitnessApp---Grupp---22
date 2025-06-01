@@ -24,7 +24,6 @@ import java.util.*;
 public class CalorieLogScreen {
 
     private final BorderPane root;
-    private final VBox layout;
     private final TextField matField;
     private final TextField kalorierField;
     private final DatePicker datumPicker;
@@ -36,18 +35,10 @@ public class CalorieLogScreen {
     private final Map<String, Integer> loggTextTillID = new HashMap<>();
 
     public CalorieLogScreen() {
-        // === UI Root ===
         root = new BorderPane();
-        layout = new VBox(15);
-        layout.setAlignment(Pos.TOP_CENTER);
-        layout.setPadding(new Insets(20));
-        layout.setStyle("-fx-background-color: linear-gradient(white, #e6f0ff);");
+        root.setStyle("-fx-background-color: linear-gradient(to bottom, #ffffff, #e6f0ff);");
 
-        // === Header ===
-        HBox header = new HBox(15);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(10));
-
+        // === Hemikon och rubrik ===
         ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
         homeIcon.setFitHeight(30);
         homeIcon.setFitWidth(30);
@@ -57,43 +48,79 @@ public class CalorieLogScreen {
             new MainMenuController(menuScreen, Main.getPrimaryStage());
             Main.getPrimaryStage().setScene(new Scene(menuScreen.getRoot(), 800, 600));
         });
+        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
+        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
+        BorderPane.setMargin(homeIcon, new Insets(20, 0, 0, 20));
+        root.setTop(homeIcon);
 
-        VBox titleBox = new VBox(3);
-        Label title = new Label("Logga kalorier");
+        VBox layout = new VBox(15);
+        layout.getChildren().clear(); // Rensa tidigare innehåll om det finns
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.setPadding(new Insets(10));
+
+        // === Titel ===
+        VBox headerBox = new VBox(5);
+        headerBox.setPadding(new Insets(10, 0, 10, 0));
+        Text title = new Text("Logga kalorier");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
-        title.setStyle("-fx-text-fill: #1A3E8B;");
+        title.setFill(Color.web("#1A3E8B"));
         Label subtitle = new Label("Följ ditt dagliga kaloriintag och nå dina mål.");
         subtitle.setFont(Font.font("Arial", 14));
         subtitle.setStyle("-fx-text-fill: #555;");
-        titleBox.getChildren().addAll(title, subtitle);
+        headerBox.getChildren().addAll(title, subtitle);
+        layout.getChildren().add(headerBox);
 
-        header.getChildren().addAll(homeIcon, titleBox);
-        layout.getChildren().add(header);
+        // === Kortvy ===
+        VBox card = new VBox(12);
+        card.setPadding(new Insets(20));
+        card.setMaxWidth(400);
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setStyle("""
+            -fx-background-color: white;
+            -fx-background-radius: 12px;
+            -fx-border-radius: 12px;
+            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2);
+        """);
 
-        // === Inputs & Data ===
+        Label totalLabel = new Label("Dagens totala kalorier:");
+        totalLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         dagensSummaText = new Text();
+
+        Label loggarLabel = new Label("Loggar för valt datum:");
+        loggarLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         loggLista = new ListView<>();
         loggLista.setPrefHeight(150);
-        // så listan inte blir för hög på liten skärm
-        VBox matBox = new VBox(3);
+
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem redigeraItem = new MenuItem("Redigera");
+        MenuItem taBortItem = new MenuItem("Ta bort");
+        contextMenu.getItems().addAll(redigeraItem, taBortItem);
+        loggLista.setContextMenu(contextMenu);
+
+        redigeraItem.setOnAction(e -> redigeraValdLogg());
+        taBortItem.setOnAction(e -> taBortValdLogg());
+
+        // === Fält ===
         Label matLabel = new Label("Vad har du ätit?");
         matLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         matField = new TextField();
         matField.setPromptText("Exempel: Kyckling, ris, yoghurt...");
-        matBox.getChildren().addAll(matLabel, matField);
 
-
-        VBox kalorierBox = new VBox(3);
         Label kalorierLabel = new Label("Kaloriinnehåll");
         kalorierLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         kalorierField = new TextField();
         kalorierField.setPromptText("Exempel: 250");
-        kalorierBox.getChildren().addAll(kalorierLabel, kalorierField);
 
+        Label datumLabel = new Label("Datum:");
+        datumLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         datumPicker = new DatePicker(LocalDate.now());
-        datumPicker.setPromptText("Välj datum");
 
+        // === Knapp ===
         sparaButton = new Button("Spara intag");
+        sparaButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6;");
+        sparaButton.setOnMouseEntered(e -> sparaButton.setStyle("-fx-background-color: #0F2A5C; -fx-text-fill: white; -fx-background-radius: 6;"));
+        sparaButton.setOnMouseExited(e -> sparaButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6;"));
+        sparaButton.setOnAction(e -> sparaIntag());
 
         // === Progress ===
         kaloriProgressBar = new ProgressBar(0);
@@ -102,89 +129,30 @@ public class CalorieLogScreen {
         HBox progressBox = new HBox(10, kaloriProgressBar, procentText);
         progressBox.setAlignment(Pos.CENTER_LEFT);
 
-        // === Contextmeny för redigera & ta bort ===
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem redigeraItem = new MenuItem("Redigera");
-        MenuItem taBortItem = new MenuItem("Ta bort");
-        contextMenu.getItems().addAll(redigeraItem, taBortItem);
-        loggLista.setContextMenu(contextMenu);
-
-        // === Händelser ===
-        redigeraItem.setOnAction(event -> redigeraValdLogg());
-        taBortItem.setOnAction(event -> taBortValdLogg());
-
-        sparaButton.setOnAction(e -> sparaIntag());
-
-        VBox card = new VBox(12);
-        card.setMinWidth(300);
-        card.setSpacing(10); // lite extra luft mellan elementen
-
-        card.setPadding(new Insets(20));
-        card.setMaxWidth(600);
-        card.setPrefWidth(0.9 * 800); // Responsiv känsla om du vill
-        card.setAlignment(Pos.CENTER_LEFT);
-        card.setStyle("""
-    -fx-background-color: white;
-    -fx-background-radius: 12px;
-    -fx-border-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2);
-""");
-
-        Label totalLabel = new Label("Dagens totala kalorier:");
-        totalLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-
-        Label loggarLabel = new Label("Loggar för valt datum:");
-        loggarLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-
-//        Label matLabel = new Label("Vad har du ätit?");
-//        matLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-//
-//        Label kalorierLabel = new Label("Kalorier:");
-//        kalorierLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-
-        Label datumLabel = new Label("Datum:");
-        datumLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-
-        sparaButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6;");
-
-        VBox matAndKcalContainer = new VBox(10);
-        matAndKcalContainer.getChildren().addAll(matBox, kalorierBox);
-
+        // === Bygg ihop kortet ===
         card.getChildren().addAll(
                 totalLabel,
                 dagensSummaText,
                 loggarLabel,
                 loggLista,
-                matAndKcalContainer,
-                datumLabel,
-                datumPicker,
+                matLabel, matField,
+                kalorierLabel, kalorierField,
+                datumLabel, datumPicker,
                 sparaButton,
                 progressBox
         );
 
+        VBox wrapper = new VBox(card);
+        wrapper.setPadding(new Insets(20));
+        wrapper.setAlignment(Pos.CENTER);
 
+        layout.getChildren().add(wrapper);
 
+        StackPane container = new StackPane(layout);
+        container.setPadding(new Insets(30));
+        container.setAlignment(Pos.TOP_CENTER);
 
-        HBox cardWrapper = new HBox(card);
-        cardWrapper.setAlignment(Pos.CENTER);
-        cardWrapper.setPrefWidth(Double.MAX_VALUE); // gör att den fyller hela bredden
-
-        layout.getChildren().add(cardWrapper);
-
-        layout.setPrefHeight(Double.MAX_VALUE);
-
-        ScrollPane scrollPane = new ScrollPane(layout);
-        scrollPane.setFitToWidth(true);
-        root.setStyle("-fx-background-color: linear-gradient(white, #e6f0ff);");
-        layout.setBackground(Background.EMPTY); // eller ta bort bakgrunden helt från layout
-
-
-// Sätt rätt bakgrund på layout manuellt
-        layout.setBackground(new Background(new BackgroundFill(
-                Color.web("#ffffff"), CornerRadii.EMPTY, Insets.EMPTY
-        )));
-
-        root.setCenter(scrollPane);
+        root.setCenter(container);
 
         uppdateraLoggLista();
         uppdateraDagensSumma();
@@ -192,11 +160,9 @@ public class CalorieLogScreen {
 
     public Parent getRoot() {
         return root;
-
     }
 
-    // === Metoder ===
-
+    // === Logik-metoder ===
     private void sparaIntag() {
         try {
             String mat = matField.getText();
@@ -210,7 +176,7 @@ public class CalorieLogScreen {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Resultat");
             alert.setHeaderText(null);
-            alert.setContentText(sparat ? " Sparat: " + mat + " (" + kalorier + " kcal)" : " Kunde inte spara.");
+            alert.setContentText(sparat ? "Sparat: " + mat + " (" + kalorier + " kcal)" : "Kunde inte spara.");
             alert.showAndWait();
 
             matField.clear();
@@ -309,7 +275,6 @@ public class CalorieLogScreen {
             loggLista.getItems().add(text);
             loggTextTillID.put(text, logg.getLoggID());
 
-            // Fade-in på varje rad
             FadeTransition ft = new FadeTransition(Duration.millis(300), loggLista);
             ft.setFromValue(0);
             ft.setToValue(1);

@@ -33,10 +33,14 @@ public class MainMenuController {
 
         view.getCalorieLogButton().setOnAction(e -> {
             CalorieLogScreen screen = new CalorieLogScreen();
-            Scene scene = new Scene(screen.getRoot(), 600, 500);
+            Scene scene = new Scene(screen.getRoot());
             primaryStage.setScene(scene);
+            primaryStage.sizeToScene();// Använd faktisk storlek
+            primaryStage.setResizable(false);  // Förhindra skeva ändringar
+            primaryStage.centerOnScreen();
             primaryStage.setTitle("Logga kalorier");
         });
+
 
         view.getLoggaUtButton().setOnAction(e -> {
             Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -61,6 +65,7 @@ public class MainMenuController {
                 EditProfileScreen editProfileScreen = new EditProfileScreen(account, primaryStage);
                 Scene scene = new Scene(editProfileScreen.getRoot(), 400, 550);
                 primaryStage.setScene(scene);
+                primaryStage.centerOnScreen();
             } else {
                 System.out.println("Konto hittades inte.");
             }
