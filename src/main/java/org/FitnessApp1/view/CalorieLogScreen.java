@@ -36,7 +36,16 @@ public class CalorieLogScreen {
 
     public CalorieLogScreen() {
         root = new BorderPane();
-        root.setStyle("-fx-background-color: linear-gradient(to bottom, #ffffff, #e6f0ff);");
+        root.setStyle("""
+    -fx-background-color: linear-gradient(
+        from 0% 0% to 100% 100%,
+        #26c6da,  /* turkos */
+        #00838f,  /* petrolblå */
+        #283593   /* djupblå */
+    );
+""");
+
+
 
         // === Hemikon och rubrik ===
         ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
@@ -62,7 +71,7 @@ public class CalorieLogScreen {
         VBox headerBox = new VBox(5);
         headerBox.setPadding(new Insets(10, 0, 10, 0));
         Text title = new Text("Logga kalorier");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        title.setFont(Font.font("Italic", FontWeight.BOLD, 26));
         title.setFill(Color.web("#1A3E8B"));
         Label subtitle = new Label("Följ ditt dagliga kaloriintag och nå dina mål.");
         subtitle.setFont(Font.font("Arial", 14));
@@ -73,7 +82,7 @@ public class CalorieLogScreen {
         // === Kortvy ===
         VBox card = new VBox(12);
         card.setPadding(new Insets(20));
-        card.setMaxWidth(400);
+        card.setMaxWidth(450);
         card.setAlignment(Pos.CENTER_LEFT);
         card.setStyle("""
             -fx-background-color: white;
@@ -114,6 +123,11 @@ public class CalorieLogScreen {
         Label datumLabel = new Label("Datum:");
         datumLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         datumPicker = new DatePicker(LocalDate.now());
+
+        datumPicker.valueProperty().addListener((obs, oldVal, newVal) -> {
+            uppdateraLoggLista();
+            uppdateraDagensSumma();
+        });
 
         // === Knapp ===
         sparaButton = new Button("Spara intag");
@@ -169,6 +183,24 @@ public class CalorieLogScreen {
             int kalorier = Integer.parseInt(kalorierField.getText());
             LocalDate datum = datumPicker.getValue();
             int kontoID = SessionManager.getAktivtKontoID();
+
+            if (kalorier > 10000) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Felaktigt värde");
+                alert.setHeaderText("För högt kaloriintag");
+                alert.setContentText("Du kan inte logga mer än 10 000 kalorier per dag.");
+                alert.showAndWait();
+                return;
+            }
+
+            if (kalorier < 1) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Felaktigt värde");
+                alert.setHeaderText("Ogiltiga kaloriintag");
+                alert.setContentText("Vänligen ange ett värde mellan 1 och 10 000 kalorier.");
+                alert.showAndWait();
+                return;
+            }
 
             CalorieLog logg = new CalorieLog(datum, mat, kalorier, kontoID);
             boolean sparat = new CalorieLogDAO().addLog(logg);

@@ -23,8 +23,14 @@ public class GoogleMapsGymCardView extends ScrollPane {
     public GoogleMapsGymCardView(List<GymLocation> gyms, Runnable goHomeAction) {
         VBox root = new VBox(20);
         root.setPadding(new Insets(20));
-        root.setStyle("-fx-background-color: linear-gradient(white, #e6f0ff);");
-
+        root.setStyle("""
+    -fx-background-color: linear-gradient(
+        from 0% 0% to 100% 100%,
+        #26c6da,  /* turkos */
+        #00838f,  /* petrolblå */
+        #283593   /* djupblå */
+    );
+""");
         // Ny header med titel + tagline
         HBox header = new HBox(15);
         header.setAlignment(Pos.CENTER_LEFT);
@@ -38,7 +44,7 @@ public class GoogleMapsGymCardView extends ScrollPane {
 
         VBox titleBox = new VBox(3);
         Label title = new Label("Utegym i Malmö");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        title.setFont(Font.font("italic", FontWeight.BOLD, 26));
         title.setStyle("-fx-text-fill: #1A3E8B;");
 
         Label subtitle = new Label("Hitta din nästa träningsplats i det fria.");

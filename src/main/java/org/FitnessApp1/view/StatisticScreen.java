@@ -36,7 +36,14 @@ public class StatisticScreen {
     public StatisticScreen() {
         // === Root och layout ===
         root = new BorderPane();
-        root.setStyle("-fx-background-color: linear-gradient(white, #e6f0ff);");
+        root.setStyle("""
+    -fx-background-color: linear-gradient(
+        from 0% 0% to 100% 100%,
+        #26c6da,  /* turkos */
+        #00838f,  /* petrolblå */
+        #283593   /* djupblå */
+    );
+""");
 
         layout = new VBox(20);
         layout.setPadding(new Insets(40));
@@ -58,7 +65,7 @@ public class StatisticScreen {
 
         VBox titleBox = new VBox(3);
         Label title = new Label("Statistik");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        title.setFont(Font.font("italic", FontWeight.BOLD, 26));
         title.setStyle("-fx-text-fill: #1A3E8B;");
         Label subtitle = new Label("Se din utveckling av kaloriintag över tid.");
         subtitle.setFont(Font.font("Arial", 14));
@@ -161,6 +168,12 @@ public class StatisticScreen {
         calorieChart.getXAxis().setAutoRanging(false);
         ((NumberAxis) calorieChart.getXAxis()).setUpperBound(selectedMonth.lengthOfMonth());
         calorieChart.getData().add(series);
+
+        NumberAxis yAxis = (NumberAxis) calorieChart.getYAxis();
+        yAxis.setAutoRanging(false);
+        yAxis.setLowerBound(0);
+        yAxis.setUpperBound(10000);
+        yAxis.setTickUnit(1000);
     }
 
     private static class ComboBoxCell extends javafx.scene.control.ListCell<YearMonth> {

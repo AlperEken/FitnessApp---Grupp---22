@@ -27,11 +27,17 @@ public class MainMenuScreen {
         layout.setPadding(new Insets(40));
         layout.setStyle("""
             -fx-alignment: center;
-            -fx-background-color: linear-gradient(to bottom, #fdfdfd, #dbeafe);
-        """);
+                 -fx-background-color: linear-gradient(
+                                                 from 0% 0% to 100% 100%,
+                                                 #26c6da,  /* turkos */
+                                                 #00838f,  /* petrolblå */
+                                                 #283593   /* djupblå */
+                                             );
+            """);
 
         title = new Text("Välkommen, " + username + "!");
         title.setStyle("""
+            -fx-font-family: 'italic';
             -fx-font-size: 26px;
             -fx-font-weight: bold;
             -fx-text-fill: #1E3A8A;

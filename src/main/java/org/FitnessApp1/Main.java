@@ -55,7 +55,12 @@ public class Main extends Application {
                         stage.setScene(mainMenuScene);
                     }
                 } else {
-                    System.out.println("Felaktig e-post eller lösenord");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Inloggning misslyckades");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Felaktig e-post eller lösenord. Försök igen.");
+                    alert.showAndWait();
+
                 }
             });
         });
@@ -88,6 +93,10 @@ public class Main extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText(registrerad ? "Kontot har skapats!" : "Kunde inte skapa konto.");
                 alert.showAndWait();
+
+                if (registrerad) {
+                    visaStartScreen(stage);
+                }
             } catch (Exception ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Fel");

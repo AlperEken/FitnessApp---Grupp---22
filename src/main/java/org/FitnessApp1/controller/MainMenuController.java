@@ -33,7 +33,7 @@ public class MainMenuController {
 
         view.getCalorieLogButton().setOnAction(e -> {
             CalorieLogScreen screen = new CalorieLogScreen();
-            Scene scene = new Scene(screen.getRoot());
+            Scene scene = new Scene(screen.getRoot(), 550, 750);
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();// Använd faktisk storlek
             primaryStage.setResizable(false);  // Förhindra skeva ändringar
@@ -63,7 +63,7 @@ public class MainMenuController {
 
             if (account != null) {
                 EditProfileScreen editProfileScreen = new EditProfileScreen(account, primaryStage);
-                Scene scene = new Scene(editProfileScreen.getRoot(), 400, 550);
+                Scene scene = new Scene(editProfileScreen.getRoot(), 800, 750);
                 primaryStage.setScene(scene);
                 primaryStage.centerOnScreen();
             } else {

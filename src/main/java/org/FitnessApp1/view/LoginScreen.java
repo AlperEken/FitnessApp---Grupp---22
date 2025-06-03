@@ -31,7 +31,16 @@ public class LoginScreen {
 
     private void buildUI() {
         BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color: linear-gradient(to bottom, #ffffff, #e6f0ff);");
+        root.setStyle("""
+    -fx-background-color: linear-gradient(
+        from 0% 0% to 100% 100%,
+        #26c6da,  /* turkos */
+        #00838f,  /* petrolblå */
+        #283593   /* djupblå */
+    );
+""");
+
+
 
         VBox layoutCard = new VBox(15);
         layoutCard.setPadding(new Insets(30));
@@ -52,6 +61,7 @@ public class LoginScreen {
         VBox headerBox = new VBox(5);
         headerBox.setPadding(new Insets(20, 0, 10, 0));
         Text title = new Text("Logga in");
+        title.setStyle("-fx-font-family: 'italic';");
         title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #1A3E8B;");
         headerBox.getChildren().addAll(title);
 
