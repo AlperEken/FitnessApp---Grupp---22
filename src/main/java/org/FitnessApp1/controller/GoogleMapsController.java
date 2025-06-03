@@ -35,10 +35,34 @@ public class GoogleMapsController {
             MainMenuController mainMenuController = new MainMenuController(mainMenuScreen, primaryStage);
             Scene scene = new Scene(mainMenuScreen.getRoot(), 800, 600);
             primaryStage.setScene(scene);
+<<<<<<< Updated upstream
         });
 
 
         BorderPane root = new BorderPane();
+=======
+
+        });
+
+//        Image homeImage = new Image(getClass().getResourceAsStream("/images/home.png"));
+//        ImageView homeIcon = new ImageView(homeImage);
+//        homeIcon.setFitWidth(24);
+//        homeIcon.setFitHeight(24);
+//        homeIcon.setPreserveRatio(true);
+//        homeIcon.setStyle("-fx-cursor: hand;");
+//        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
+//        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
+//
+//        homeIcon.setOnMouseClicked(e -> {
+//            MainMenuScreen mainMenuScreen = new MainMenuScreen(SessionManager.getUsername());
+//            new MainMenuController(mainMenuScreen, primaryStage);
+//            Scene mainScene = new Scene(mainMenuScreen.getRoot(), 800, 600);
+//            primaryStage.setScene(mainScene);
+//        });
+
+        BorderPane root = new BorderPane();
+//        root.setTop(homeIcon);
+>>>>>>> Stashed changes
         root.setCenter(view.getRoot()); // 👈 ScrollPane från vyklassen
 
         Scene scene = new Scene(root, 800, 600);

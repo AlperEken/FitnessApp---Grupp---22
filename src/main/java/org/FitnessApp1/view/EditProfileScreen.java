@@ -77,6 +77,7 @@ public class EditProfileScreen {
         saveButton = new Button("Spara");
         deleteButton = new Button("Radera konto");
 
+<<<<<<< Updated upstream
         saveButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;");
         saveButton.setOnMouseEntered(e -> saveButton.setStyle("-fx-background-color: #0F2A5C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
         saveButton.setOnMouseExited(e -> saveButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
@@ -84,6 +85,10 @@ public class EditProfileScreen {
         deleteButton.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;");
         deleteButton.setOnMouseEntered(e -> deleteButton.setStyle("-fx-background-color: #B71C1C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
         deleteButton.setOnMouseExited(e -> deleteButton.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
+=======
+        saveButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6;");
+        deleteButton.setStyle("-fx-background-color: lightgray; -fx-background-radius: 6;");
+>>>>>>> Stashed changes
 
         layout.getChildren().addAll(
                 new Label("Förnamn:"), nameField,
@@ -100,16 +105,23 @@ public class EditProfileScreen {
         saveButton.setOnAction(e -> sparaÄndringar());
         deleteButton.setOnAction(e -> raderaKonto());
 
+<<<<<<< Updated upstream
         ScrollPane scrollPane = new ScrollPane(layout);
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background-color:transparent;");
 
         VBox centeredCard = new VBox(scrollPane);
+=======
+        VBox centeredCard = new VBox(layout);
+>>>>>>> Stashed changes
         centeredCard.setAlignment(Pos.CENTER);
 
         root.setTop(header);
         root.setCenter(centeredCard);
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     }
 
     private void sparaÄndringar() {
