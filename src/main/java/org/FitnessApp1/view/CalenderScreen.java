@@ -20,6 +20,7 @@ public class CalenderScreen {
     private final CalendarDAO calendarDAO;
     private Label selectedDateLabel;
     private final int kontoid;  // ID för inloggat konto
+    private VBox root;
 
     public CalenderScreen(int kontoid) {
         this.kontoid = kontoid;
@@ -31,7 +32,6 @@ public class CalenderScreen {
         calendarView.setShowPageSwitcher(true);
         calendarView.setShowPrintButton(false);
         calendarView.setShowDeveloperConsole(false);
-
         calendarView.showMonthPage();
 
         selectedDateLabel = new Label("Valt datum: -");
@@ -54,7 +54,7 @@ public class CalenderScreen {
         btnVisaAnteckning.setOnAction(e -> {
             LocalDate date = calendarView.getDate();
             if (date != null) {
-                String note = calendarDAO.getNoteForDate(date, kontoid);  // skickar med kontoid
+                String note = calendarDAO.getNoteForDate(date, kontoid);
                 if (note != null && !note.isEmpty()) {
                     visaFönster(date);
                 } else {
@@ -67,9 +67,9 @@ public class CalenderScreen {
         btnTaBortAnteckning.setOnAction(e -> {
             LocalDate date = calendarView.getDate();
             if (date != null) {
-                String note = calendarDAO.getNoteForDate(date, kontoid);  // skickar med kontoid
+                String note = calendarDAO.getNoteForDate(date, kontoid);
                 if (note != null && !note.isEmpty()) {
-                    boolean success = calendarDAO.deleteNote(date, kontoid);  // skickar med kontoid
+                    boolean success = calendarDAO.deleteNote(date, kontoid);
                     if (success) {
                         visaInfo("Anteckningen för " + date + " är borttagen.");
                     } else {
@@ -84,18 +84,19 @@ public class CalenderScreen {
         HBox buttonsBox = new HBox(10, btnNyAnteckning, btnVisaAnteckning, btnTaBortAnteckning);
         buttonsBox.setPadding(new Insets(10));
 
-        VBox root = new VBox(10, selectedDateLabel, buttonsBox, calendarView);
+        root = new VBox(10, selectedDateLabel, buttonsBox, calendarView);
         root.setPadding(new Insets(10));
-
-        Stage stage = new Stage();
-        stage.setTitle("Kalender");
-        stage.setScene(new Scene(root, 800, 600));
-        stage.show();
     }
+
 
     public CalendarView getCalendarView() {
         return calendarView;
     }
+
+    public VBox getRoot() {
+        return root;
+    }
+
 
     public void visaFönster(LocalDate datum) {
         Stage stage = new Stage();
