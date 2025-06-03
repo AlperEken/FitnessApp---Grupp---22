@@ -30,4 +30,6 @@ public class SessionManager {
         aktivtKontoID = -1; // Återställ till en ogiltig ID, vilket innebär att ingen är inloggad
         username = ""; // Rensa användarnamn vid utloggning
     }
+
+
 }

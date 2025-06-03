@@ -14,14 +14,15 @@ import javafx.stage.Stage;
 import org.FitnessApp1.model.CalendarDAO;
 
 import java.time.LocalDate;
-
 public class CalenderScreen {
 
     private final CalendarView calendarView;
     private final CalendarDAO calendarDAO;
     private Label selectedDateLabel;
+    private final int kontoid;  // ID för inloggat konto
 
-    public CalenderScreen() {
+    public CalenderScreen(int kontoid) {
+        this.kontoid = kontoid;
         calendarDAO = new CalendarDAO();
 
         calendarView = new CalendarView();
@@ -35,14 +36,12 @@ public class CalenderScreen {
 
         selectedDateLabel = new Label("Valt datum: -");
 
-        // Uppdatera label när datum ändras
         calendarView.dateProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate != null) {
                 selectedDateLabel.setText("Valt datum: " + newDate);
             }
         });
 
-        // Knapp för att skapa ny anteckning på valt datum
         Button btnNyAnteckning = new Button("Ny anteckning");
         btnNyAnteckning.setOnAction(e -> {
             LocalDate date = calendarView.getDate();
@@ -51,12 +50,11 @@ public class CalenderScreen {
             }
         });
 
-        // Knapp för att visa befintlig anteckning (om någon) på valt datum
         Button btnVisaAnteckning = new Button("Visa anteckning");
         btnVisaAnteckning.setOnAction(e -> {
             LocalDate date = calendarView.getDate();
             if (date != null) {
-                String note = calendarDAO.getNoteForDate(date);
+                String note = calendarDAO.getNoteForDate(date, kontoid);  // skickar med kontoid
                 if (note != null && !note.isEmpty()) {
                     visaFönster(date);
                 } else {
@@ -65,15 +63,18 @@ public class CalenderScreen {
             }
         });
 
-        // Ny knapp för att ta bort anteckning
         Button btnTaBortAnteckning = new Button("Ta bort anteckning");
         btnTaBortAnteckning.setOnAction(e -> {
             LocalDate date = calendarView.getDate();
             if (date != null) {
-                String note = calendarDAO.getNoteForDate(date);
+                String note = calendarDAO.getNoteForDate(date, kontoid);  // skickar med kontoid
                 if (note != null && !note.isEmpty()) {
-                    calendarDAO.deleteNote(date);
-                    visaInfo("Anteckningen för " + date + " är borttagen.");
+                    boolean success = calendarDAO.deleteNote(date, kontoid);  // skickar med kontoid
+                    if (success) {
+                        visaInfo("Anteckningen för " + date + " är borttagen.");
+                    } else {
+                        visaInfo("Kunde inte ta bort anteckningen.");
+                    }
                 } else {
                     visaInfo("Ingen anteckning att ta bort för datum: " + date);
                 }
@@ -86,14 +87,12 @@ public class CalenderScreen {
         VBox root = new VBox(10, selectedDateLabel, buttonsBox, calendarView);
         root.setPadding(new Insets(10));
 
-        // Skapa och visa scenen (om du vill visa i egen scen)
         Stage stage = new Stage();
         stage.setTitle("Kalender");
         stage.setScene(new Scene(root, 800, 600));
         stage.show();
     }
 
-    /** Returnerar kalender-noden för inbäddning (om du vill bädda in i annan scen) */
     public CalendarView getCalendarView() {
         return calendarView;
     }
@@ -108,7 +107,7 @@ public class CalenderScreen {
         TextArea anteckningArea = new TextArea();
         anteckningArea.setWrapText(true);
 
-        String existingNote = calendarDAO.getNoteForDate(datum);
+        String existingNote = calendarDAO.getNoteForDate(datum, kontoid);  // skickar med kontoid
         if (existingNote != null) {
             anteckningArea.setText(existingNote);
         }
@@ -118,22 +117,17 @@ public class CalenderScreen {
 
         btnSpara.setOnAction(e -> {
             String text = anteckningArea.getText().trim();
+            boolean success;
             if (!text.isEmpty()) {
-                boolean success = calendarDAO.saveOrUpdate(datum, text);
-                if (success) {
-                    stage.close();
-                    visaInfo("Anteckningen för " + datum + " har sparats.");
-                } else {
-                    visaInfo("Kunde inte spara anteckningen. Försök igen.");
-                }
+                success = calendarDAO.saveOrUpdate(datum, kontoid, text);  // skickar med kontoid
             } else {
-                boolean success = calendarDAO.deleteNote(datum);
-                if (success) {
-                    stage.close();
-                    visaInfo("Anteckningen för " + datum + " har tagits bort.");
-                } else {
-                    visaInfo("Kunde inte ta bort anteckningen. Försök igen.");
-                }
+                success = calendarDAO.deleteNote(datum, kontoid);  // skickar med kontoid
+            }
+            if (success) {
+                stage.close();
+                visaInfo("Anteckningen för " + datum + " har sparats.");
+            } else {
+                visaInfo("Kunde inte spara anteckningen. Försök igen.");
             }
         });
 

@@ -5,6 +5,7 @@ import org.mindrot.jbcrypt.BCrypt; // Import för BCrypt
 import java.sql.*;
 
 public class AccountDAO {
+    private static int id = 0;
 
     // Hämta konto baserat på kontoID
     public Account getAccountByID(int kontoID) {
@@ -105,17 +106,14 @@ public class AccountDAO {
 
 
 
-    // Registrera ett nytt konto
     public boolean registeraccount(Account account) {
-        String sql = "INSERT INTO konto (namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMål) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO konto (namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMål) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING kontoID";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            // Hasha lösenordet innan det sparas
             String hashedPassword = BCrypt.hashpw(account.getLösenord(), BCrypt.gensalt());
 
-            // Sätt parametrar
             stmt.setString(1, account.getNamn());
             stmt.setString(2, account.getEfternamn());
             stmt.setString(3, account.getEpost());
@@ -125,9 +123,18 @@ public class AccountDAO {
             stmt.setString(7, account.getKön());
             stmt.setInt(8, account.getDagligtMal());
 
-            // Utför insättningen
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int kontoID = rs.getInt("kontoID");
+
+                // Skapa kalender och koppla till kontoID
+                int kalenderID = skapaNyKalender(kontoID);
+                if (kalenderID == -1) {
+                    System.err.println("Misslyckades skapa kalender");
+                    return false;
+                }
+                return true;
+            }
 
         } catch (SQLException e) {
             System.err.println("Fel vid registrering: " + e.getMessage());
@@ -135,6 +142,8 @@ public class AccountDAO {
 
         return false;
     }
+
+
 
     // Uppdatera konto (exempel: användare ändrar sina uppgifter)
     public boolean uppdateraKonto(Account account) {
@@ -184,6 +193,26 @@ public class AccountDAO {
             return false;
         }
     }
+
+
+    public int skapaNyKalender(int kontoID) {
+        String sql = "INSERT INTO kalender (kontoID) VALUES (?) RETURNING kalenderid";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, kontoID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("kalenderid");
+            }
+        } catch (SQLException e) {
+            System.err.println("Fel vid skapande av kalender: " + e.getMessage());
+        }
+        return -1;  // Fel indikerat
+    }
+
+
 
 
 }
