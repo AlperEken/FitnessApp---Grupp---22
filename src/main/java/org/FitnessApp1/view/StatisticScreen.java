@@ -163,10 +163,6 @@ public class StatisticScreen {
         calorieChart.getData().add(series);
     }
 
-<<<<<<< Updated upstream
-=======
-    // === Formatterad cellklass för ComboBox ===
->>>>>>> Stashed changes
     private static class ComboBoxCell extends javafx.scene.control.ListCell<YearMonth> {
         private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("sv"));
         private final boolean isButton;

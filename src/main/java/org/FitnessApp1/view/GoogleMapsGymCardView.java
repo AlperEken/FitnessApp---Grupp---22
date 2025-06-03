@@ -25,7 +25,6 @@ public class GoogleMapsGymCardView extends ScrollPane {
         root.setPadding(new Insets(20));
         root.setStyle("-fx-background-color: linear-gradient(white, #e6f0ff);");
 
-<<<<<<< Updated upstream
         // Ny header med titel + tagline
         HBox header = new HBox(15);
         header.setAlignment(Pos.CENTER_LEFT);
@@ -40,42 +39,16 @@ public class GoogleMapsGymCardView extends ScrollPane {
         VBox titleBox = new VBox(3);
         Label title = new Label("Utegym i Malmö");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
-=======
-        // Header med hemikon, rubrik och linje
-        HBox header = new HBox(15);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(10, 20, 0, 20));
-
-        ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
-        homeIcon.setFitHeight(30);
-        homeIcon.setFitWidth(30);
-        homeIcon.setStyle("""
-            -fx-cursor: hand;
-            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0.2, 0, 1);
-            """);
-        homeIcon.setOnMouseClicked(e -> goHomeAction.run());
-
-        VBox titleBox = new VBox(5);
-        Label title = new Label("Utegym i Malmö");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 28));
->>>>>>> Stashed changes
         title.setStyle("-fx-text-fill: #1A3E8B;");
 
         Label subtitle = new Label("Hitta din nästa träningsplats i det fria.");
         subtitle.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         subtitle.setStyle("-fx-text-fill: #555;");
 
-<<<<<<< Updated upstream
         titleBox.getChildren().addAll(title, subtitle);
         header.getChildren().addAll(homeIcon, titleBox);
 
 
-=======
-
-        titleBox.getChildren().addAll(title, subtitle);
-        header.getChildren().addAll(homeIcon, titleBox);
-
->>>>>>> Stashed changes
         // Gymkort
         FlowPane content = new FlowPane();
         content.setPadding(new Insets(10, 20, 20, 20));
