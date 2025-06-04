@@ -1,32 +1,37 @@
 package org.FitnessApp1.view;
 
 import com.calendarfx.view.CalendarView;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.FitnessApp1.Main;
+import org.FitnessApp1.controller.MainMenuController;
 import org.FitnessApp1.model.CalendarDAO;
+import org.FitnessApp1.model.SessionManager;
 
 import java.time.LocalDate;
+
 public class CalenderScreen {
 
     private final CalendarView calendarView;
     private final CalendarDAO calendarDAO;
     private Label selectedDateLabel;
-    private final int kontoid;  // ID för inloggat konto
+    private final int kontoid;
     private VBox root;
 
     public CalenderScreen(int kontoid) {
         this.kontoid = kontoid;
-        calendarDAO = new CalendarDAO();
+        this.calendarDAO = new CalendarDAO();
 
-        calendarView = new CalendarView();
+        this.calendarView = new CalendarView();
         calendarView.setShowAddCalendarButton(false);
         calendarView.setShowSearchField(false);
         calendarView.setShowPageSwitcher(true);
@@ -41,6 +46,22 @@ public class CalenderScreen {
                 selectedDateLabel.setText("Valt datum: " + newDate);
             }
         });
+
+        // === Hemknapp (ikon) ===
+        ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
+        homeIcon.setFitWidth(30);
+        homeIcon.setFitHeight(30);
+        homeIcon.setOnMouseClicked(e -> {
+            MainMenuScreen menuScreen = new MainMenuScreen(SessionManager.getUsername());
+            new MainMenuController(menuScreen, Main.getPrimaryStage());
+            Main.getPrimaryStage().setScene(new Scene(menuScreen.getRoot(), 800, 600));
+        });;
+        homeIcon.setStyle("-fx-cursor: hand;");
+        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
+        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
+
+        HBox topBox = new HBox(10, homeIcon, selectedDateLabel);
+        topBox.setPadding(new Insets(10));
 
         Button btnNyAnteckning = new Button("Ny anteckning");
         btnNyAnteckning.setOnAction(e -> {
@@ -84,10 +105,9 @@ public class CalenderScreen {
         HBox buttonsBox = new HBox(10, btnNyAnteckning, btnVisaAnteckning, btnTaBortAnteckning);
         buttonsBox.setPadding(new Insets(10));
 
-        root = new VBox(10, selectedDateLabel, buttonsBox, calendarView);
+        root = new VBox(10, topBox, buttonsBox, calendarView);
         root.setPadding(new Insets(10));
     }
-
 
     public CalendarView getCalendarView() {
         return calendarView;
@@ -97,18 +117,16 @@ public class CalenderScreen {
         return root;
     }
 
-
     public void visaFönster(LocalDate datum) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Anteckning för " + datum);
 
         Label label = new Label("Datum: " + datum);
-
         TextArea anteckningArea = new TextArea();
         anteckningArea.setWrapText(true);
 
-        String existingNote = calendarDAO.getNoteForDate(datum, kontoid);  // skickar med kontoid
+        String existingNote = calendarDAO.getNoteForDate(datum, kontoid);
         if (existingNote != null) {
             anteckningArea.setText(existingNote);
         }
@@ -120,9 +138,9 @@ public class CalenderScreen {
             String text = anteckningArea.getText().trim();
             boolean success;
             if (!text.isEmpty()) {
-                success = calendarDAO.saveOrUpdate(datum, kontoid, text);  // skickar med kontoid
+                success = calendarDAO.saveOrUpdate(datum, kontoid, text);
             } else {
-                success = calendarDAO.deleteNote(datum, kontoid);  // skickar med kontoid
+                success = calendarDAO.deleteNote(datum, kontoid);
             }
             if (success) {
                 stage.close();
@@ -134,12 +152,10 @@ public class CalenderScreen {
 
         btnAvbryt.setOnAction(e -> stage.close());
 
-        VBox layout = new VBox(10);
+        VBox layout = new VBox(10, label, anteckningArea, btnSpara, btnAvbryt);
         layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(label, anteckningArea, btnSpara, btnAvbryt);
 
-        Scene scene = new Scene(layout, 400, 300);
-        stage.setScene(scene);
+        stage.setScene(new Scene(layout, 400, 300));
         stage.showAndWait();
     }
 
