@@ -72,8 +72,11 @@ public class MainMenuController {
         });
 
         view.getKalenderButton().setOnAction(e -> {
-            CalenderScreen calenderScreen = new CalenderScreen();
-            calenderScreen.visaFönster();
+            int kontoID = SessionManager.getAktivtKontoID();
+            CalenderScreen calenderScreen = new CalenderScreen(kontoID);
+            Scene scene = new Scene(calenderScreen.getRoot(), 800, 600);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Kalender");
         });
     }
 }
