@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.FitnessApp1.controller.MainMenuController;
+import org.FitnessApp1.model.AdminDAO;
 import org.FitnessApp1.view.*;
 import org.FitnessApp1.model.AccountDAO;
 import org.FitnessApp1.model.Account;
@@ -32,35 +33,51 @@ public class Main extends Application {
             LoginScreen loginScreen = new LoginScreen(stage);
             Scene loginScene = new Scene(loginScreen.getRoot(), 600, 550);
             stage.setScene(loginScene);
-            stage.centerOnScreen(); // Centrera fönstret på skärmen
-            stage.setScene(loginScene);
+            stage.centerOnScreen();
 
             loginScreen.getLoginButton().setOnAction(loginEvent -> {
                 String email = loginScreen.getEmailField().getText();
                 String password = loginScreen.getPasswordField().getText();
 
-                AccountDAO accountDAO = new AccountDAO();
-                boolean isLoggedIn = accountDAO.valideraInloggning(email, password);
+                if (loginScreen.getAdminToggle().isSelected()) {
+                    // === Admininloggning ===
+                    AdminDAO adminDAO = new AdminDAO();
+                    boolean isAdminLoggedIn = adminDAO.validateAdmin(email, password);
 
-                if (isLoggedIn) {
-                    String namn = accountDAO.getNameByEmail(email);
-                    if (namn != null) {
-                        int kontoID = accountDAO.getAcoountIDByEmail(email);
-                        SessionManager.setAktivtKontoID(kontoID);
-                        SessionManager.setUsername(namn);
-
-                        MainMenuScreen mainMenuScreen = new MainMenuScreen(namn);
-                        new MainMenuController(mainMenuScreen, stage);
-                        Scene mainMenuScene = new Scene(mainMenuScreen.getRoot(), 800, 600);
-                        stage.setScene(mainMenuScene);
+                    if (isAdminLoggedIn) {
+                        AdminDashboard adminDashboard = new AdminDashboard(stage);
+                        adminDashboard.view();  // Du skapar denna metod
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Admin-inloggning misslyckades");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Felaktig admin-e-post eller lösenord.");
+                        alert.showAndWait();
                     }
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Inloggning misslyckades");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Felaktig e-post eller lösenord. Försök igen.");
-                    alert.showAndWait();
+                    // === Vanlig användarinloggning ===
+                    AccountDAO accountDAO = new AccountDAO();
+                    boolean isLoggedIn = accountDAO.valideraInloggning(email, password);
 
+                    if (isLoggedIn) {
+                        String namn = accountDAO.getNameByEmail(email);
+                        if (namn != null) {
+                            int kontoID = accountDAO.getAcoountIDByEmail(email);
+                            SessionManager.setAktivtKontoID(kontoID);
+                            SessionManager.setUsername(namn);
+
+                            MainMenuScreen mainMenuScreen = new MainMenuScreen(namn);
+                            new MainMenuController(mainMenuScreen, stage);
+                            Scene mainMenuScene = new Scene(mainMenuScreen.getRoot(), 800, 600);
+                            stage.setScene(mainMenuScene);
+                        }
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Inloggning misslyckades");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Felaktig e-post eller lösenord. Försök igen.");
+                        alert.showAndWait();
+                    }
                 }
             });
         });

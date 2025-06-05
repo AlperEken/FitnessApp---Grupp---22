@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -22,6 +23,8 @@ public class LoginScreen {
     private TextField emailField;
     private PasswordField passwordField;
     private Button loginButton;
+    private ToggleButton adminToggle;
+
 
     public LoginScreen(Stage stage) {
         this.stage = stage;
@@ -81,6 +84,15 @@ public class LoginScreen {
         loginButton.setOnMouseEntered(e -> loginButton.setStyle("-fx-background-color: #0F2A5C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
         loginButton.setOnMouseExited(e -> loginButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
 
+        // === Toggle för adminläge ===
+        adminToggle = new ToggleButton("Adminläge");
+        adminToggle.setStyle("-fx-background-radius: 6;");
+        adminToggle.setPrefWidth(250);
+
+        // Lägg till i layouten
+        layoutCard.getChildren().add(adminToggle);
+
+
         layoutCard.getChildren().addAll(headerBox, emailField, passwordField, loginButton);
 
         VBox wrapper = new VBox(layoutCard);
@@ -110,4 +122,9 @@ public class LoginScreen {
     public Button getLoginButton() {
         return loginButton;
     }
+
+    public ToggleButton getAdminToggle() {
+        return adminToggle;
+    }
+
 }
