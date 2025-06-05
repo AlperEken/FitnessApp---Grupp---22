@@ -1,5 +1,8 @@
 package org.FitnessApp1.view;
 
+import com.calendarfx.model.Calendar;
+import com.calendarfx.model.CalendarSource;
+import com.calendarfx.model.Entry;
 import com.calendarfx.view.CalendarView;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -14,22 +17,25 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.FitnessApp1.Main;
 import org.FitnessApp1.controller.MainMenuController;
-import org.FitnessApp1.model.CalendarDAO;
-import org.FitnessApp1.model.SessionManager;
+import org.FitnessApp1.model.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class CalenderScreen {
 
     private final CalendarView calendarView;
     private final CalendarDAO calendarDAO;
+    private final ActivityDAO activityDAO;
     private Label selectedDateLabel;
     private final int kontoid;
     private VBox root;
+    private final Calendar activityCalendar;
 
     public CalenderScreen(int kontoid) {
         this.kontoid = kontoid;
         this.calendarDAO = new CalendarDAO();
+        this.activityDAO = new ActivityDAO();
 
         this.calendarView = new CalendarView();
         calendarView.setShowAddCalendarButton(false);
@@ -39,15 +45,22 @@ public class CalenderScreen {
         calendarView.setShowDeveloperConsole(false);
         calendarView.showMonthPage();
 
+        // Setup calendar source for activities
+        this.activityCalendar = new Calendar("Activities");
+        CalendarSource source = new CalendarSource("My Calendar Source");
+        source.getCalendars().add(activityCalendar);
+        calendarView.getCalendarSources().add(source);
+
         selectedDateLabel = new Label("Valt datum: -");
 
         calendarView.dateProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate != null) {
                 selectedDateLabel.setText("Valt datum: " + newDate);
+                loadActivitiesForDate(newDate);
             }
         });
 
-        // === Hemknapp (ikon) ===
+        // === Home icon ===
         ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
         homeIcon.setFitWidth(30);
         homeIcon.setFitHeight(30);
@@ -55,7 +68,7 @@ public class CalenderScreen {
             MainMenuScreen menuScreen = new MainMenuScreen(SessionManager.getUsername());
             new MainMenuController(menuScreen, Main.getPrimaryStage());
             Main.getPrimaryStage().setScene(new Scene(menuScreen.getRoot(), 800, 600));
-        });;
+        });
         homeIcon.setStyle("-fx-cursor: hand;");
         homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
         homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
@@ -93,6 +106,7 @@ public class CalenderScreen {
                     boolean success = calendarDAO.deleteNote(date, kontoid);
                     if (success) {
                         visaInfo("Anteckningen för " + date + " är borttagen.");
+                        loadActivitiesForDate(date);
                     } else {
                         visaInfo("Kunde inte ta bort anteckningen.");
                     }
@@ -107,6 +121,8 @@ public class CalenderScreen {
 
         root = new VBox(10, topBox, buttonsBox, calendarView);
         root.setPadding(new Insets(10));
+
+        loadActivitiesForDate(calendarView.getDate());
     }
 
     public CalendarView getCalendarView() {
@@ -145,6 +161,7 @@ public class CalenderScreen {
             if (success) {
                 stage.close();
                 visaInfo("Anteckningen för " + datum + " har sparats.");
+                loadActivitiesForDate(datum);
             } else {
                 visaInfo("Kunde inte spara anteckningen. Försök igen.");
             }
@@ -173,5 +190,16 @@ public class CalenderScreen {
 
         stage.setScene(new Scene(layout, 300, 150));
         stage.showAndWait();
+    }
+
+    private void loadActivitiesForDate(LocalDate date) {
+        activityCalendar.clear();
+
+        List<Activity> activities = activityDAO.getActivitiesForDay(kontoid, date);
+        for (Activity act : activities) {
+            Entry<String> entry = new Entry<>(act.getNote());
+            entry.setInterval(date.atTime(act.getStartTime()), date.atTime(act.getEndTime()));
+            activityCalendar.addEntry(entry);
+        }
     }
 }
