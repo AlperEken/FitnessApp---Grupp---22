@@ -17,10 +17,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStageRef = primaryStage; // Spara för tillgång vid utloggning
+        primaryStageRef = primaryStage;
         visaStartScreen(primaryStage);
     }
-
 
     public static void visaStartScreen(Stage stage) {
         StartScreen startScreen = new StartScreen(stage);
@@ -40,13 +39,12 @@ public class Main extends Application {
                 String password = loginScreen.getPasswordField().getText();
 
                 if (loginScreen.getAdminToggle().isSelected()) {
-                    // === Admininloggning ===
                     AdminDAO adminDAO = new AdminDAO();
                     boolean isAdminLoggedIn = adminDAO.validateAdmin(email, password);
 
                     if (isAdminLoggedIn) {
-                        AdminDashboard adminDashboard = new AdminDashboard(stage);
-                        adminDashboard.view();  // Du skapar denna metod
+                        AdminDashboard adminDashboard = new AdminDashboard(stage, loginScreen);
+                        adminDashboard.view();
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Admin-inloggning misslyckades");
@@ -55,7 +53,6 @@ public class Main extends Application {
                         alert.showAndWait();
                     }
                 } else {
-                    // === Vanlig användarinloggning ===
                     AccountDAO accountDAO = new AccountDAO();
                     boolean isLoggedIn = accountDAO.valideraInloggning(email, password);
 
@@ -86,7 +83,6 @@ public class Main extends Application {
             visaRegistreringsskärm(stage);
         });
     }
-
 
     public static void visaRegistreringsskärm(Stage stage) {
         RegisterScreen registerScreen = new RegisterScreen(primaryStageRef);
@@ -125,7 +121,6 @@ public class Main extends Application {
         Scene registreringScene = new Scene(registerScreen.getRoot(), 600, 600);
         stage.setScene(registreringScene);
         stage.centerOnScreen();
-
     }
 
     public static Stage getPrimaryStage() {

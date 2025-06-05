@@ -4,38 +4,89 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.FitnessApp1.model.Account;
-import org.FitnessApp1.model.AccountDAO;
-import org.FitnessApp1.model.AdminDAO;
+import org.FitnessApp1.model.*;
 
 public class AdminDashboard {
 
     private final Stage stage;
+    private final LoginScreen loginScreen;
 
-    public AdminDashboard(Stage stage) {
+    public AdminDashboard(Stage stage, LoginScreen loginScreen) {
         this.stage = stage;
+        this.loginScreen = loginScreen;
     }
 
     public void view() {
-        VBox layout = new VBox(15);
-        layout.setPadding(new Insets(30));
-        layout.setAlignment(Pos.CENTER);
+        BorderPane root = new BorderPane();
+        root.setStyle("""
+            -fx-background-color: linear-gradient(
+                from 0% 0% to 100% 100%,
+                #26c6da,
+                #00838f,
+                #283593
+            );
+        """);
+
+        VBox layoutCard = new VBox(15);
+        layoutCard.setPadding(new Insets(30));
+        layoutCard.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);");
+        layoutCard.setMaxWidth(350);
+        layoutCard.setMinWidth(300);
+        layoutCard.setAlignment(Pos.CENTER);
+
+        Text title = new Text("Adminpanel");
+        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #1A3E8B;");
 
         Button btnAddAdmin = new Button("Lägg till admin");
         Button btnRemoveAdmin = new Button("Ta bort admin");
         Button btnDeleteAccount = new Button("Ta bort konto");
         Button btnResetPassword = new Button("Återställ lösenord");
 
+        for (Button btn : new Button[]{btnAddAdmin, btnRemoveAdmin, btnDeleteAccount, btnResetPassword}) {
+            btn.setPrefWidth(250);
+            btn.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;");
+            btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #0F2A5C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
+            btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;"));
+        }
+
         btnAddAdmin.setOnAction(e -> addNewAdmin());
         btnRemoveAdmin.setOnAction(e -> removeAdmin());
         btnDeleteAccount.setOnAction(e -> removeAccount());
         btnResetPassword.setOnAction(e -> resetPassword());
 
-        layout.getChildren().addAll(btnAddAdmin, btnRemoveAdmin, btnDeleteAccount, btnResetPassword);
+        layoutCard.getChildren().addAll(title, btnAddAdmin, btnRemoveAdmin, btnDeleteAccount, btnResetPassword);
 
-        Scene scene = new Scene(layout, 400, 300);
+        VBox wrapper = new VBox(layoutCard);
+        wrapper.setPadding(new Insets(50));
+        wrapper.setAlignment(Pos.CENTER);
+
+        ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
+        homeIcon.setFitWidth(30);
+        homeIcon.setFitHeight(30);
+        homeIcon.setStyle("-fx-cursor: hand;");
+        homeIcon.setOnMouseClicked(e -> {
+            SessionManager.clearAktivtKontoID();
+            SessionManager.setUsername(null);
+
+            Scene loginScene = loginScreen.getRoot().getScene();
+            if (loginScene != null) {
+                stage.setScene(loginScene);
+                stage.centerOnScreen();
+            }
+        });
+        homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
+        homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
+
+        root.setTop(homeIcon);
+        BorderPane.setMargin(homeIcon, new Insets(20, 0, 0, 20));
+        root.setCenter(wrapper);
+
+        Scene scene = new Scene(root, 600, 550);
         stage.setScene(scene);
         stage.setTitle("Adminpanel");
         stage.centerOnScreen();
@@ -91,7 +142,7 @@ public class AdminDashboard {
             String[] delar = input.split(",");
             if (delar.length == 2) {
                 String epost = delar[0].trim();
-                String nyttLösen = delar[1].trim();
+                String nyttLosen = delar[1].trim();
 
                 AccountDAO dao = new AccountDAO();
                 int kontoID = dao.getAccountIDByEmail(epost);
@@ -103,7 +154,7 @@ public class AdminDashboard {
 
                 Account konto = dao.getAccountByID(kontoID);
                 if (konto != null) {
-                    konto.setLösenord(nyttLösen);
+                    konto.setLösenord(nyttLosen);
                     boolean uppdaterat = dao.uppdateraKonto(konto);
                     showResult(uppdaterat, "Lösenord uppdaterat", "Kunde inte uppdatera lösenord");
                 } else {
@@ -115,11 +166,11 @@ public class AdminDashboard {
         });
     }
 
-    private void showResult(boolean lyckades, String okMeddelande, String felMeddelande) {
+    private void showResult(boolean lyckades, String ok, String fel) {
         Alert alert = new Alert(lyckades ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR);
         alert.setTitle(lyckades ? "Klart" : "Fel");
         alert.setHeaderText(null);
-        alert.setContentText(lyckades ? okMeddelande : felMeddelande);
+        alert.setContentText(lyckades ? ok : fel);
         alert.showAndWait();
     }
 
