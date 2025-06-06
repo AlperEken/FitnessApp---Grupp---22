@@ -1,5 +1,7 @@
 package org.FitnessApp1.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,10 +17,14 @@ public class AdminDashboard {
 
     private final Stage stage;
     private final LoginScreen loginScreen;
+    private final AccountDAO accountDAO = new AccountDAO();
+
 
     public AdminDashboard(Stage stage, LoginScreen loginScreen) {
         this.stage = stage;
         this.loginScreen = loginScreen;
+
+
     }
 
     public void view() {
@@ -93,78 +99,240 @@ public class AdminDashboard {
     }
 
     private void addNewAdmin() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Lägg till admin");
-        dialog.setHeaderText("Fyll i e-post för ett befintligt konto");
+        AdminDAO adminDAO = new AdminDAO();
 
-        dialog.showAndWait().ifPresent(epost -> {
-            boolean skapad = new AdminDAO().createAdmin(epost.trim());
-            showResult(skapad, "Admin tillagd", "Misslyckades lägga till admin (kanske finns redan?)");
+        Dialog<Account> dialog = new Dialog<>();
+        dialog.setTitle("Lägg till admin");
+        dialog.setHeaderText("Välj ett konto att ge admin-rättigheter");
+
+        ButtonType addButtonType = new ButtonType("Lägg till", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+
+        ObservableList<Account> nonAdmins = adminDAO.getNonAdmins();
+        nonAdmins.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+
+        ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(nonAdmins));
+        listView.setPrefHeight(250);
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Sök namn eller e-post...");
+
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            String lower = newText.toLowerCase();
+            ObservableList<Account> filtered = FXCollections.observableArrayList();
+
+            for (Account acc : nonAdmins) {
+                if (acc.getNamn().toLowerCase().contains(lower) ||
+                        acc.getEfternamn().toLowerCase().contains(lower) ||
+                        acc.getEpost().toLowerCase().contains(lower)) {
+                    filtered.add(acc);
+                }
+            }
+
+            listView.setItems(filtered);
+        });
+
+        VBox content = new VBox(10, searchField, listView);
+        content.setPadding(new Insets(10));
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setResultConverter(button -> {
+            if (button == addButtonType) {
+                return listView.getSelectionModel().getSelectedItem();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(selected -> {
+            if (selected != null) {
+                boolean added = adminDAO.createAdmin(selected.getEpost());
+                showResult(added, "Admin tillagd", "Misslyckades lägga till admin.");
+            } else {
+                showError("Du måste välja ett konto.");
+            }
         });
     }
+
+
 
     private void removeAdmin() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Ta bort admin");
-        dialog.setHeaderText("Fyll i adminens e-post att ta bort");
+        AdminDAO adminDAO = new AdminDAO();
 
-        dialog.showAndWait().ifPresent(email -> {
-            boolean raderad = new AdminDAO().removeAdmin(email.trim());
-            showResult(raderad, "Admin raderad", "Kunde inte radera admin");
+        Dialog<Account> dialog = new Dialog<>();
+        dialog.setTitle("Ta bort admin");
+        dialog.setHeaderText("Välj en admin att ta bort");
+
+        ButtonType removeButtonType = new ButtonType("Ta bort", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(removeButtonType, ButtonType.CANCEL);
+
+        ObservableList<Account> admins = adminDAO.getAllAdmins();
+        admins.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+
+        ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(admins));
+        listView.setPrefHeight(250);
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Sök admin via namn eller e-post...");
+
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            String lower = newText.toLowerCase();
+            ObservableList<Account> filtered = FXCollections.observableArrayList();
+
+            for (Account acc : admins) {
+                if (acc.getNamn().toLowerCase().contains(lower) ||
+                        acc.getEfternamn().toLowerCase().contains(lower) ||
+                        acc.getEpost().toLowerCase().contains(lower)) {
+                    filtered.add(acc);
+                }
+            }
+
+            listView.setItems(filtered);
+        });
+
+        VBox content = new VBox(10, searchField, listView);
+        content.setPadding(new Insets(10));
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setResultConverter(button -> {
+            if (button == removeButtonType) {
+                return listView.getSelectionModel().getSelectedItem();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(selected -> {
+            if (selected != null) {
+                boolean removed = adminDAO.removeAdmin(selected.getEpost());
+                showResult(removed, "Admin borttagen", "Kunde inte ta bort admin.");
+            } else {
+                showError("Du måste välja en admin.");
+            }
         });
     }
 
+
+
     private void removeAccount() {
-        TextInputDialog dialog = new TextInputDialog();
+        Dialog<Account> dialog = new Dialog<>();
         dialog.setTitle("Ta bort konto");
-        dialog.setHeaderText("Fyll i e-post för kontot du vill radera");
+        dialog.setHeaderText("Välj ett konto att ta bort");
 
-        dialog.showAndWait().ifPresent(epost -> {
-            AccountDAO dao = new AccountDAO();
-            int kontoID = dao.getAccountIDByEmail(epost.trim());
+        ButtonType removeButtonType = new ButtonType("Ta bort", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(removeButtonType, ButtonType.CANCEL);
 
-            if (kontoID == -1) {
-                showError("Inget konto hittades med e-post: " + epost);
+        ObservableList<Account> allAccounts = accountDAO.getAllaKonton();
+        allAccounts.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+
+        ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(allAccounts));
+        listView.setPrefHeight(250);
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Sök efter namn eller e-post...");
+
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            String lower = newText.toLowerCase();
+            ObservableList<Account> filtered = FXCollections.observableArrayList();
+
+            for (Account acc : allAccounts) {
+                if (acc.getNamn().toLowerCase().contains(lower) ||
+                        acc.getEfternamn().toLowerCase().contains(lower) ||
+                        acc.getEpost().toLowerCase().contains(lower)) {
+                    filtered.add(acc);
+                }
+            }
+
+            listView.setItems(filtered);
+        });
+
+        VBox content = new VBox(10, searchField, listView);
+        content.setPadding(new Insets(10));
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setResultConverter(button -> {
+            if (button == removeButtonType) {
+                return listView.getSelectionModel().getSelectedItem();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(selected -> {
+            if (selected != null) {
+                boolean removed = accountDAO.raderaKonto(selected.getKontoID());
+                showResult(removed, "Kontot togs bort", "Kunde inte radera kontot.");
+            } else {
+                showError("Du måste välja ett konto.");
+            }
+        });
+    }
+
+
+
+
+    private void resetPassword() {
+        Dialog<Account> dialog = new Dialog<>();
+        dialog.setTitle("Återställ lösenord");
+        dialog.setHeaderText("Välj ett konto och ange nytt lösenord");
+
+        ButtonType resetButtonType = new ButtonType("Återställ", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(resetButtonType, ButtonType.CANCEL);
+
+        ObservableList<Account> allAccounts = accountDAO.getAllaKonton();
+        allAccounts.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+
+        ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(allAccounts));
+        listView.setPrefHeight(200);
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Sök namn eller e-post...");
+
+        PasswordField newPasswordField = new PasswordField();
+        newPasswordField.setPromptText("Nytt lösenord");
+
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            String lower = newVal.toLowerCase();
+            ObservableList<Account> filtered = FXCollections.observableArrayList();
+
+            for (Account acc : allAccounts) {
+                if (acc.getNamn().toLowerCase().contains(lower) ||
+                        acc.getEfternamn().toLowerCase().contains(lower) ||
+                        acc.getEpost().toLowerCase().contains(lower)) {
+                    filtered.add(acc);
+                }
+            }
+
+            listView.setItems(filtered);
+        });
+
+        VBox content = new VBox(10, searchField, listView, newPasswordField);
+        content.setPadding(new Insets(10));
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setResultConverter(button -> {
+            if (button == resetButtonType) {
+                return listView.getSelectionModel().getSelectedItem();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(selected -> {
+            String newPassword = newPasswordField.getText();
+
+            if (selected == null) {
+                showError("Du måste välja ett konto.");
                 return;
             }
 
-            boolean raderat = dao.raderaKonto(kontoID);
-            showResult(raderat, "Konto raderat", "Kunde inte radera kontot");
-        });
-    }
-
-    private void resetPassword() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Återställ lösenord");
-        dialog.setHeaderText("Fyll i e-post och nytt lösenord (separera med komma)");
-
-        dialog.showAndWait().ifPresent(input -> {
-            String[] delar = input.split(",");
-            if (delar.length == 2) {
-                String epost = delar[0].trim();
-                String nyttLosen = delar[1].trim();
-
-                AccountDAO dao = new AccountDAO();
-                int kontoID = dao.getAccountIDByEmail(epost);
-
-                if (kontoID == -1) {
-                    showError("Inget konto hittades med e-post: " + epost);
-                    return;
-                }
-
-                Account konto = dao.getAccountByID(kontoID);
-                if (konto != null) {
-                    konto.setLösenord(nyttLosen);
-                    boolean uppdaterat = dao.uppdateraKonto(konto);
-                    showResult(uppdaterat, "Lösenord uppdaterat", "Kunde inte uppdatera lösenord");
-                } else {
-                    showError("Konto kunde inte hämtas.");
-                }
-            } else {
-                showError("Du måste skriva e-post och nytt lösenord separerat med komma.");
+            if (newPassword == null || newPassword.isBlank()) {
+                showError("Lösenordet får inte vara tomt.");
+                return;
             }
+
+            selected.setLösenord(newPassword);
+            boolean updated = accountDAO.uppdateraKonto(selected);
+            showResult(updated, "Lösenord uppdaterat", "Kunde inte uppdatera lösenord.");
         });
     }
+
 
     private void showResult(boolean lyckades, String ok, String fel) {
         Alert alert = new Alert(lyckades ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR);

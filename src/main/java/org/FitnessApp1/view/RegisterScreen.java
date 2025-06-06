@@ -45,8 +45,8 @@ public class RegisterScreen {
     );
 """);
 
-        VBox layoutCard = new VBox(15);
-        layoutCard.setPadding(new Insets(30));
+        VBox layoutCard = new VBox(5);
+        layoutCard.setPadding(new Insets(10));
         layoutCard.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);");
         layoutCard.setMaxWidth(400);
         layoutCard.setStyle(layoutCard.getStyle() + "-fx-alignment: center;");
@@ -87,16 +87,20 @@ public class RegisterScreen {
         // === Lägg till i kortet ===
         layoutCard.getChildren().addAll(
                 headerBox,
-                nameField,
-                lastnameField,
-                emailField,
-                passwordField,
-                ageField,
-                weightField,
-                genderField,
-                goalField,
+
+                skapaLabel("Förnamn:"), nameField,
+                skapaLabel("Efternamn:"), lastnameField,
+                skapaLabel("E-post:"), emailField,
+                skapaLabel("Lösenord:"), passwordField,
+                skapaLabel("Ålder:"), ageField,
+                skapaLabel("Vikt (kg):"), weightField,
+                skapaLabel("Kön:"), genderField,
+                skapaLabel("Dagligt mål (kalorier):"), goalField,
+
                 registerButton
         );
+
+
 
         VBox wrapper = new VBox(layoutCard);
         wrapper.setPadding(new Insets(50));
@@ -182,4 +186,11 @@ public class RegisterScreen {
     public TextField getGenderField() { return genderField; }
     public TextField getGoalField() { return goalField; }
     public Button getRegisterButton() { return registerButton; }
+
+    private Label skapaLabel(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-font-family: italic; -fx-font-weight: bold; -fx-text-fill: black;");
+        return label;
+    }
+
 }

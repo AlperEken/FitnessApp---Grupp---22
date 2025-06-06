@@ -1,5 +1,7 @@
 package org.FitnessApp1.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.mindrot.jbcrypt.BCrypt; // Import för BCrypt
 
 import java.sql.*;
@@ -232,6 +234,36 @@ public class AccountDAO {
 
         return -1; // Fel eller ej hittad
     }
+
+    public ObservableList<Account> getAllaKonton() {
+        ObservableList<Account> lista = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM konto";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("kontoID");
+                String namn = rs.getString("namn");
+                String efternamn = rs.getString("efternamn");
+                String epost = rs.getString("epost");
+                String lösenord = rs.getString("lösenord");
+                int ålder = rs.getInt("ålder");
+                double vikt = rs.getDouble("vikt");
+                String kön = rs.getString("kön");
+                int dagligtMal = rs.getInt("dagligtMål");
+
+                lista.add(new Account(id, namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMal));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Fel vid hämtning av alla konton: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
 
 
 }

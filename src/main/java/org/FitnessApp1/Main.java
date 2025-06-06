@@ -118,7 +118,7 @@ public class Main extends Application {
             }
         });
 
-        Scene registreringScene = new Scene(registerScreen.getRoot(), 600, 600);
+        Scene registreringScene = new Scene(registerScreen.getRoot(), 600, 650);
         stage.setScene(registreringScene);
         stage.centerOnScreen();
     }

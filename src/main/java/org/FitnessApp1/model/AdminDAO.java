@@ -1,5 +1,8 @@
 package org.FitnessApp1.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.sql.*;
 
 public class AdminDAO {
@@ -61,4 +64,71 @@ public class AdminDAO {
             return false;
         }
     }
+
+    public ObservableList<Account> getNonAdmins() {
+        ObservableList<Account> list = FXCollections.observableArrayList();
+        String sql = """
+        SELECT * FROM konto
+        WHERE epost NOT IN (SELECT epost FROM admin)
+    """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new Account(
+                        rs.getInt("kontoID"),
+                        rs.getString("namn"),
+                        rs.getString("efternamn"),
+                        rs.getString("epost"),
+                        rs.getString("lösenord"),
+                        rs.getInt("ålder"),
+                        rs.getDouble("vikt"),
+                        rs.getString("kön"),
+                        rs.getInt("dagligtMål")
+                ));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching non-admin accounts: " + e.getMessage());
+        }
+
+        return list;
+    }
+
+    public ObservableList<Account> getAllAdmins() {
+        ObservableList<Account> list = FXCollections.observableArrayList();
+        String sql = """
+        SELECT k.*
+        FROM konto k
+        JOIN admin a ON k.epost = a.epost
+    """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new Account(
+                        rs.getInt("kontoID"),
+                        rs.getString("namn"),
+                        rs.getString("efternamn"),
+                        rs.getString("epost"),
+                        rs.getString("lösenord"),
+                        rs.getInt("ålder"),
+                        rs.getDouble("vikt"),
+                        rs.getString("kön"),
+                        rs.getInt("dagligtMål")
+                ));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching admins: " + e.getMessage());
+        }
+
+        return list;
+    }
+
+
 }
