@@ -34,6 +34,7 @@ public class CalorieLogScreen {
     private final Text procentText;
     private final Map<String, Integer> loggTextTillID = new HashMap<>();
 
+
     public CalorieLogScreen() {
         root = new BorderPane();
         root.setStyle("""
@@ -44,8 +45,6 @@ public class CalorieLogScreen {
         #283593   /* djupblå */
     );
 """);
-
-
 
         // === Hemikon och rubrik ===
         ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));

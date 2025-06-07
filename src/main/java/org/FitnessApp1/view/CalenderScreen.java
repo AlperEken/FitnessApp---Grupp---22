@@ -109,10 +109,6 @@ public class CalenderScreen {
         root.setPadding(new Insets(10));
     }
 
-    public CalendarView getCalendarView() {
-        return calendarView;
-    }
-
     public VBox getRoot() {
         return root;
     }

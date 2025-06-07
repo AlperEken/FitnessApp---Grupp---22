@@ -27,40 +27,20 @@ public class CalorieLog {
         return loggID;
     }
 
-    public void setLogID(int loggID) {
-        this.loggID = loggID;
-    }
-
     public LocalDate getDate() {
         return datum;
-    }
-
-    public void setDate(LocalDate datum) {
-        this.datum = datum;
     }
 
     public String getDescription() {
         return beskrivning;
     }
 
-    public void setDescription(String beskrivning) {
-        this.beskrivning = beskrivning;
-    }
-
     public int getCalories() {
         return kalorier;
     }
 
-    public void setCalories(int kalorier) {
-        this.kalorier = kalorier;
-    }
-
     public int getAccountID() {
         return kontoID;
-    }
-
-    public void setAccountID(int kontoID) {
-        this.kontoID = kontoID;
     }
 
     @Override

@@ -148,39 +148,39 @@ public class EditProfileScreen {
 
     private void saveChanges() {
         try {
-            String nyttNamn = nameField.getText();
-            String nyttEfternamn = efternameField.getText();
-            String nyttEpost = emailField.getText();
-            String nyttLösen = passwordField.getText();
-            double nyVikt = Double.parseDouble(weightField.getText());
-            String nyttKön = genderField.getText();
-            int nyttMål = Integer.parseInt(goalField.getText());
+            String newName = nameField.getText();
+            String newLastname = efternameField.getText();
+            String newEmail = emailField.getText();
+            String newPassword = passwordField.getText();
+            double newWeight = Double.parseDouble(weightField.getText());
+            String newGender = genderField.getText();
+            int newGoal = Integer.parseInt(goalField.getText());
 
-            String lösenAttSpara = nyttLösen.isEmpty() ? originalAccount.getPassword() : nyttLösen;
+            String passwordToSave = newPassword.isEmpty() ? originalAccount.getPassword() : newPassword;
 
             Account uppdateratAccount = new Account(
                     originalAccount.getAccountID(),
-                    nyttNamn,
-                    nyttEfternamn,
-                    nyttEpost,
-                    lösenAttSpara,
+                    newName,
+                    newLastname,
+                    newEmail,
+                    passwordToSave,
                     originalAccount.getAge(),
-                    nyVikt,
-                    nyttKön,
-                    nyttMål
+                    newWeight,
+                    newGender,
+                    newGoal
             );
 
-            boolean lyckades = new AccountDAO().updateAccount(uppdateratAccount);
+            boolean success = new AccountDAO().updateAccount(uppdateratAccount);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Profiluppdatering");
             alert.setHeaderText(null);
-            alert.setContentText(lyckades ? "Profilen har uppdaterats." : "Misslyckades att spara ändringar.");
+            alert.setContentText(success ? "Profilen har uppdaterats." : "Misslyckades att spara ändringar.");
             alert.showAndWait();
 
-            if (lyckades) {
-                SessionManager.setUsername(nyttNamn);
-                MainMenuScreen menu = new MainMenuScreen(nyttNamn);
+            if (success) {
+                SessionManager.setUsername(newName);
+                MainMenuScreen menu = new MainMenuScreen(newName);
                 new MainMenuController(menu, primaryStage);
                 primaryStage.setScene(new Scene(menu.getRoot(), 800, 600));
             }

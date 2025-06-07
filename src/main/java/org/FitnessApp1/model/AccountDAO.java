@@ -213,28 +213,6 @@ public class AccountDAO {
         }
         return -1;  // Fel indikerat
     }
-
-
-    public int getAccountIDByEmail(String email) {
-        String sql = "SELECT kontoID FROM konto WHERE epost = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("kontoID");
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Fel vid hämtning av kontoID från epost: " + e.getMessage());
-        }
-
-        return -1; // Fel eller ej hittad
-    }
-
     public ObservableList<Account> getAllAccounts() {
         ObservableList<Account> lista = FXCollections.observableArrayList();
         String sql = "SELECT * FROM konto";

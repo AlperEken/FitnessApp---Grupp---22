@@ -89,25 +89,25 @@ public class Main extends Application {
 
         registerScreen.getRegisterButton().setOnAction(regEvent -> {
             try {
-                String namn = registerScreen.getNameField().getText();
-                String efternamn = registerScreen.getLastnameField().getText();
-                String epost = registerScreen.getEmailField().getText();
+                String name = registerScreen.getNameField().getText();
+                String lastName = registerScreen.getLastnameField().getText();
+                String email = registerScreen.getEmailField().getText();
                 String password = registerScreen.getPasswordField().getText();
-                double vikt = Double.parseDouble(registerScreen.getWeightField().getText());
-                String kön = registerScreen.getGenderField().getText();
-                int dagligtMal = Integer.parseInt(registerScreen.getGoalField().getText());
+                double weight = Double.parseDouble(registerScreen.getWeightField().getText());
+                String gender = registerScreen.getGenderField().getText();
+                int dailyGoal = Integer.parseInt(registerScreen.getGoalField().getText());
 
-                Account account = new Account(namn, efternamn, epost, password, 0, vikt, kön, dagligtMal);
+                Account account = new Account(name, lastName, email, password, 0, weight, gender, dailyGoal);
                 AccountDAO accountDAO = new AccountDAO();
-                boolean registrerad = accountDAO.registerAccount(account);
+                boolean registered = accountDAO.registerAccount(account);
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Registrering");
                 alert.setHeaderText(null);
-                alert.setContentText(registrerad ? "Kontot har skapats!" : "Kunde inte skapa konto.");
+                alert.setContentText(registered ? "Kontot har skapats!" : "Kunde inte skapa konto.");
                 alert.showAndWait();
 
-                if (registrerad) {
+                if (registered) {
                     showStartScreen(stage);
                 }
             } catch (Exception ex) {

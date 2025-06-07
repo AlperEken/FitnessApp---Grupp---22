@@ -31,7 +31,6 @@ public class StatisticScreen {
     private final VBox layout;
     private final LineChart<Number, Number> calorieChart;
     private final ComboBox<YearMonth> monthSelector;
-    private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("sv"));
 
     public StatisticScreen() {
         // === Root och layout ===

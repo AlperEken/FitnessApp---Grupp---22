@@ -48,8 +48,8 @@ public class MainMenuScreen {
         quoteLabel.setStyle("-fx-font-size: 16px; -fx-font-style: italic;-fx-font-weight: bold; -fx-alignment: center");
         quoteLabel.setMaxWidth(300);
 
-        findGymsButton = new Button("Hitta utegym i Malmö");
-        kalenderButton = new Button("Kalender");
+        findGymsButton = new Button("\uD83C\uDFCB\uFE0F\u200D♂\uFE0F Hitta utegym i Malmö");
+        kalenderButton = new Button("\uD83D\uDDD3\uFE0F Kalender");
         calorieLogButton = new Button("🍔 Logga kalorier");
         statisticsButton = new Button("📊 Visa statistik");
         editProfileButton = new Button("✏️ Redigera konto");
@@ -123,10 +123,6 @@ public class MainMenuScreen {
     public void setUsername(String username) {
         this.username = username;
         title.setText("Välkommen, " + username + " till FitnessApp!");
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public Button getFindGymsButton() {

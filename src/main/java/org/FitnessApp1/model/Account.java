@@ -11,9 +11,6 @@ public class Account {
     private String gender;
     private int dailyGoal;
 
-    // Tom konstruktor
-    public Account() {}
-
     // Konstruktor för nyregistrering (utan ID)
     public Account(String name, String lastName, String epost, String password,
                    int age, double weight, String gender, int dailyGoal) {

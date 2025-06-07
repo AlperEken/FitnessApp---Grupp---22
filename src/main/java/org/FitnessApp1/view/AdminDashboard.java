@@ -23,8 +23,6 @@ public class AdminDashboard {
     public AdminDashboard(Stage stage, LoginScreen loginScreen) {
         this.stage = stage;
         this.loginScreen = loginScreen;
-
-
     }
 
     public void view() {

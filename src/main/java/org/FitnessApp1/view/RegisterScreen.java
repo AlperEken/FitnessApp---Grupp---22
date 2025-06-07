@@ -159,7 +159,6 @@ public class RegisterScreen {
     public TextField getLastnameField() { return lastnameField; }
     public TextField getEmailField() { return emailField; }
     public PasswordField getPasswordField() { return passwordField; }
-    public TextField getAgeField() { return ageField; }
     public TextField getWeightField() { return weightField; }
     public TextField getGenderField() { return genderField; }
     public TextField getGoalField() { return goalField; }

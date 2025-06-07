@@ -89,7 +89,6 @@ public class LoginScreen {
         // Lägg till i layouten
         layoutCard.getChildren().add(adminToggle);
 
-
         layoutCard.getChildren().addAll(headerBox, emailField, passwordField, loginButton);
 
         VBox wrapper = new VBox(layoutCard);
@@ -102,7 +101,6 @@ public class LoginScreen {
 
         layout = root;
     }
-
 
     public Parent getRoot() {
         return layout;
