@@ -39,7 +39,7 @@ public class GoogleMapsController {
 
 
         BorderPane root = new BorderPane();
-        root.setCenter(view.getRoot()); // 👈 ScrollPane från vyklassen
+        root.setCenter(view.getRoot()); //ScrollPane från vyklassen
 
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
