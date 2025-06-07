@@ -34,10 +34,11 @@ public class CalenderScreen {
         this.calendarView = new CalendarView();
         calendarView.setShowAddCalendarButton(false);
         calendarView.setShowSearchField(false);
-        calendarView.setShowPageSwitcher(true);
+        calendarView.setShowPageSwitcher(false);
         calendarView.setShowPrintButton(false);
         calendarView.setShowDeveloperConsole(false);
-        calendarView.showMonthPage();
+        calendarView.setShowToolBar(false);
+        calendarView.showMonthPage(); // Endast månadsvy
 
         selectedDateLabel = new Label("Valt datum: -");
 
@@ -47,7 +48,6 @@ public class CalenderScreen {
             }
         });
 
-        // === Hemknapp (ikon) ===
         ImageView homeIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/home.png")));
         homeIcon.setFitWidth(30);
         homeIcon.setFitHeight(30);
@@ -55,7 +55,7 @@ public class CalenderScreen {
             MainMenuScreen menuScreen = new MainMenuScreen(SessionManager.getUsername());
             new MainMenuController(menuScreen, Main.getPrimaryStage());
             Main.getPrimaryStage().setScene(new Scene(menuScreen.getRoot(), 800, 600));
-        });;
+        });
         homeIcon.setStyle("-fx-cursor: hand;");
         homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
         homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
