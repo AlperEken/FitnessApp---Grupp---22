@@ -145,7 +145,7 @@ public class StatisticScreen {
 
     private void showCalorieData() {
         YearMonth selectedMonth = monthSelector.getValue();
-        int kontoID = SessionManager.getAktivtKontoID();
+        int kontoID = SessionManager.getActiveAccountID();
         if (kontoID == -1) return;
 
         LocalDate startDate = selectedMonth.atDay(1);
@@ -155,8 +155,8 @@ public class StatisticScreen {
 
         Map<Integer, Integer> kalorierPerDag = new TreeMap<>();
         for (CalorieLog logg : logs) {
-            int dag = logg.getDatum().getDayOfMonth();
-            kalorierPerDag.put(dag, kalorierPerDag.getOrDefault(dag, 0) + logg.getKalorier());
+            int dag = logg.getDate().getDayOfMonth();
+            kalorierPerDag.put(dag, kalorierPerDag.getOrDefault(dag, 0) + logg.getCalories());
         }
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();

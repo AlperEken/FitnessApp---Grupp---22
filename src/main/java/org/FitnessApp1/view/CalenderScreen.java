@@ -67,7 +67,7 @@ public class CalenderScreen {
         btnNyAnteckning.setOnAction(e -> {
             LocalDate date = calendarView.getDate();
             if (date != null) {
-                visaFönster(date);
+                showWindow(date);
             }
         });
 
@@ -77,9 +77,9 @@ public class CalenderScreen {
             if (date != null) {
                 String note = calendarDAO.getNoteForDate(date, kontoid);
                 if (note != null && !note.isEmpty()) {
-                    visaFönster(date);
+                    showWindow(date);
                 } else {
-                    visaInfo("Ingen anteckning för datum: " + date);
+                    showInfo("Ingen anteckning för datum: " + date);
                 }
             }
         });
@@ -92,12 +92,12 @@ public class CalenderScreen {
                 if (note != null && !note.isEmpty()) {
                     boolean success = calendarDAO.deleteNote(date, kontoid);
                     if (success) {
-                        visaInfo("Anteckningen för " + date + " är borttagen.");
+                        showInfo("Anteckningen för " + date + " är borttagen.");
                     } else {
-                        visaInfo("Kunde inte ta bort anteckningen.");
+                        showInfo("Kunde inte ta bort anteckningen.");
                     }
                 } else {
-                    visaInfo("Ingen anteckning att ta bort för datum: " + date);
+                    showInfo("Ingen anteckning att ta bort för datum: " + date);
                 }
             }
         });
@@ -117,7 +117,7 @@ public class CalenderScreen {
         return root;
     }
 
-    public void visaFönster(LocalDate datum) {
+    public void showWindow(LocalDate datum) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Anteckning för " + datum);
@@ -144,9 +144,9 @@ public class CalenderScreen {
             }
             if (success) {
                 stage.close();
-                visaInfo("Anteckningen för " + datum + " har sparats.");
+                showInfo("Anteckningen för " + datum + " har sparats.");
             } else {
-                visaInfo("Kunde inte spara anteckningen. Försök igen.");
+                showInfo("Kunde inte spara anteckningen. Försök igen.");
             }
         });
 
@@ -159,7 +159,7 @@ public class CalenderScreen {
         stage.showAndWait();
     }
 
-    private void visaInfo(String message) {
+    private void showInfo(String message) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Information");

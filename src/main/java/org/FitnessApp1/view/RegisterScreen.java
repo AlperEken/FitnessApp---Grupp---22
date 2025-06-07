@@ -56,7 +56,7 @@ public class RegisterScreen {
         homeIcon.setFitWidth(30);
         homeIcon.setFitHeight(30);
         homeIcon.setStyle("-fx-cursor: hand;");
-        homeIcon.setOnMouseClicked(e -> Main.visaStartScreen(stage));
+        homeIcon.setOnMouseClicked(e -> Main.showStartScreen(stage));
         homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
         homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
 
@@ -88,14 +88,14 @@ public class RegisterScreen {
         layoutCard.getChildren().addAll(
                 headerBox,
 
-                skapaLabel("Förnamn:"), nameField,
-                skapaLabel("Efternamn:"), lastnameField,
-                skapaLabel("E-post:"), emailField,
-                skapaLabel("Lösenord:"), passwordField,
-                skapaLabel("Ålder:"), ageField,
-                skapaLabel("Vikt (kg):"), weightField,
-                skapaLabel("Kön:"), genderField,
-                skapaLabel("Dagligt mål (kalorier):"), goalField,
+                createLabel("Förnamn:"), nameField,
+                createLabel("Efternamn:"), lastnameField,
+                createLabel("E-post:"), emailField,
+                createLabel("Lösenord:"), passwordField,
+                createLabel("Ålder:"), ageField,
+                createLabel("Vikt (kg):"), weightField,
+                createLabel("Kön:"), genderField,
+                createLabel("Dagligt mål (kalorier):"), goalField,
 
                 registerButton
         );
@@ -126,7 +126,7 @@ public class RegisterScreen {
 
                 Account account = new Account(name, lastname, email, password, age, weight, gender, goal);
                 AccountDAO accountDAO = new AccountDAO();
-                boolean isCreated = accountDAO.registeraccount(account);
+                boolean isCreated = accountDAO.registerAccount(account);
 
                 Alert alert = new Alert(isCreated ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR);
                 alert.setTitle("Registrering");
@@ -134,7 +134,7 @@ public class RegisterScreen {
                 alert.showAndWait();
 
                 if (isCreated) {
-                    Main.visaStartScreen(Main.getPrimaryStage());
+                    Main.showStartScreen(Main.getPrimaryStage());
                 }
 
 
@@ -150,30 +150,8 @@ public class RegisterScreen {
     }
 
 
-
-    // Öppna login screen
-    private void openLoginScreen() {
-        LoginScreen loginScreen = new LoginScreen(stage); // Se till att skapa LoginScreen om den inte finns
-        Stage loginStage = new Stage();
-        loginStage.setTitle("Logga in");
-        loginStage.setScene(new Scene(loginScreen.getRoot(), 300, 200)); // Justera storlek
-        loginStage.show();
-    }
-
-    // Stäng registreringsfönstret
-    private void closeRegisterWindow() {
-        if (stage != null) {
-            stage.close();
-        }
-    }
-
     public Parent getRoot() {
         return layout;
-    }
-
-    // Metod för att sätta stage för fönstret (för att stänga det senare)
-    public void setStage(Stage stage) {
-        this.stage = stage;
     }
 
     // Getters
@@ -187,7 +165,7 @@ public class RegisterScreen {
     public TextField getGoalField() { return goalField; }
     public Button getRegisterButton() { return registerButton; }
 
-    private Label skapaLabel(String text) {
+    private Label createLabel(String text) {
         Label label = new Label(text);
         label.setStyle("-fx-font-family: italic; -fx-font-weight: bold; -fx-text-fill: black;");
         return label;

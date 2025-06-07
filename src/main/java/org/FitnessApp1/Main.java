@@ -18,10 +18,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStageRef = primaryStage;
-        visaStartScreen(primaryStage);
+        showStartScreen(primaryStage);
     }
 
-    public static void visaStartScreen(Stage stage) {
+    public static void showStartScreen(Stage stage) {
         StartScreen startScreen = new StartScreen(stage);
         Scene scene = new Scene(startScreen.getRoot(), 500, 400);
         stage.setScene(scene);
@@ -54,13 +54,13 @@ public class Main extends Application {
                     }
                 } else {
                     AccountDAO accountDAO = new AccountDAO();
-                    boolean isLoggedIn = accountDAO.valideraInloggning(email, password);
+                    boolean isLoggedIn = accountDAO.validateLogIn(email, password);
 
                     if (isLoggedIn) {
                         String namn = accountDAO.getNameByEmail(email);
                         if (namn != null) {
                             int kontoID = accountDAO.getAcoountIDByEmail(email);
-                            SessionManager.setAktivtKontoID(kontoID);
+                            SessionManager.setActiveAccountID(kontoID);
                             SessionManager.setUsername(namn);
 
                             MainMenuScreen mainMenuScreen = new MainMenuScreen(namn);
@@ -80,11 +80,11 @@ public class Main extends Application {
         });
 
         startScreen.getRegisterButton().setOnAction(e -> {
-            visaRegistreringsskärm(stage);
+            showRegistrationScreen(stage);
         });
     }
 
-    public static void visaRegistreringsskärm(Stage stage) {
+    public static void showRegistrationScreen(Stage stage) {
         RegisterScreen registerScreen = new RegisterScreen(primaryStageRef);
 
         registerScreen.getRegisterButton().setOnAction(regEvent -> {
@@ -99,7 +99,7 @@ public class Main extends Application {
 
                 Account account = new Account(namn, efternamn, epost, password, 0, vikt, kön, dagligtMal);
                 AccountDAO accountDAO = new AccountDAO();
-                boolean registrerad = accountDAO.registeraccount(account);
+                boolean registrerad = accountDAO.registerAccount(account);
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Registrering");
@@ -108,7 +108,7 @@ public class Main extends Application {
                 alert.showAndWait();
 
                 if (registrerad) {
-                    visaStartScreen(stage);
+                    showStartScreen(stage);
                 }
             } catch (Exception ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);

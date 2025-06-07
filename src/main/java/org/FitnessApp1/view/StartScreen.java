@@ -43,12 +43,6 @@ public class StartScreen {
             Scene loginScene = new Scene(loginScreen.getRoot(), 300, 200);
             stage.setScene(loginScene);
         });
-//
-//        registerButton.setOnAction(e -> {
-//            RegisterScreen registerScreen = new RegisterScreen(stage);
-//            Scene registerScene = new Scene(registerScreen.getRoot(), 400, 500);
-//            stage.setScene(registerScene);
-//        });
 
 
         HBox buttonBox = new HBox(20, loginButton, registerButton);

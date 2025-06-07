@@ -2,7 +2,6 @@ package org.FitnessApp1.view;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -10,7 +9,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.FitnessApp1.Main;
 import javafx.scene.image.ImageView;
@@ -44,7 +42,6 @@ public class LoginScreen {
 """);
 
 
-
         VBox layoutCard = new VBox(15);
         layoutCard.setPadding(new Insets(30));
         layoutCard.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);");
@@ -57,7 +54,7 @@ public class LoginScreen {
         homeIcon.setFitWidth(30);
         homeIcon.setFitHeight(30);
         homeIcon.setStyle("-fx-cursor: hand;");
-        homeIcon.setOnMouseClicked(e -> Main.visaStartScreen(stage));
+        homeIcon.setOnMouseClicked(e -> Main.showStartScreen(stage));
         homeIcon.setOnMouseEntered(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;"));
         homeIcon.setOnMouseExited(e -> homeIcon.setStyle("-fx-cursor: hand; -fx-opacity: 1.0;"));
 

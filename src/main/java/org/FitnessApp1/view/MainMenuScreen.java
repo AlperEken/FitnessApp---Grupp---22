@@ -141,7 +141,7 @@ public class MainMenuScreen {
         return statisticsButton;
     }
 
-    public Button getLoggaUtButton() {
+    public Button getLogOutButton() {
         return loggaUtButton;
     }
 
@@ -149,7 +149,7 @@ public class MainMenuScreen {
         return editProfileButton;
     }
 
-    public Button getKalenderButton()
+    public Button getCalenderButton()
     {
         return kalenderButton;
     }

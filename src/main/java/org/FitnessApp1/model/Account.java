@@ -42,32 +42,32 @@ public class Account {
     }
 
     // Getters & Setters
-    public int getKontoID() { return kontoID; }
-    public void setKontoID(int kontoID) { this.kontoID = kontoID; }
+    public int getAccountID() { return kontoID; }
+    public void setAccountID(int kontoID) { this.kontoID = kontoID; }
 
-    public String getNamn() { return namn; }
-    public void setNamn(String namn) { this.namn = namn; }
+    public String getName() { return namn; }
+    public void setName(String namn) { this.namn = namn; }
 
-    public String getEfternamn() { return efternamn; }
-    public void setEfternamn(String efternamn) { this.efternamn = efternamn; }
+    public String getLastname() { return efternamn; }
+    public void setLastname(String efternamn) { this.efternamn = efternamn; }
 
-    public String getEpost() { return epost; }
-    public void setEpost(String epost) { this.epost = epost; }
+    public String getEmail() { return epost; }
+    public void setEmail(String epost) { this.epost = epost; }
 
-    public String getLösenord() { return lösenord; }
-    public void setLösenord(String lösenord) { this.lösenord = lösenord; }
+    public String getPassword() { return lösenord; }
+    public void setPassword(String lösenord) { this.lösenord = lösenord; }
 
-    public int getÅlder() { return ålder; }
-    public void setÅlder(int ålder) { this.ålder = ålder; }
+    public int getAge() { return ålder; }
+    public void setAge(int ålder) { this.ålder = ålder; }
 
-    public double getVikt() { return vikt; }
-    public void setVikt(double vikt) { this.vikt = vikt; }
+    public double getWeight() { return vikt; }
+    public void setWeight(double vikt) { this.vikt = vikt; }
 
-    public String getKön() { return kön; }
-    public void setKön(String kön) { this.kön = kön; }
+    public String getGender() { return kön; }
+    public void setGender(String kön) { this.kön = kön; }
 
-    public int getDagligtMal() { return dagligtMal; }
-    public void setDagligtMal(int dagligtMal) { this.dagligtMal = dagligtMal; }
+    public int getDaliyGoals() { return dagligtMal; }
+    public void setDailyGoals(int dagligtMal) { this.dagligtMal = dagligtMal; }
 
     @Override
     public String toString() {

@@ -76,7 +76,7 @@ public class AdminDashboard {
         homeIcon.setFitHeight(30);
         homeIcon.setStyle("-fx-cursor: hand;");
         homeIcon.setOnMouseClicked(e -> {
-            SessionManager.clearAktivtKontoID();
+            SessionManager.clearActiveAccountID();
             SessionManager.setUsername(null);
 
             Scene loginScene = loginScreen.getRoot().getScene();
@@ -109,7 +109,7 @@ public class AdminDashboard {
         dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
 
         ObservableList<Account> nonAdmins = adminDAO.getNonAdmins();
-        nonAdmins.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+        nonAdmins.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
 
         ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(nonAdmins));
         listView.setPrefHeight(250);
@@ -122,9 +122,9 @@ public class AdminDashboard {
             ObservableList<Account> filtered = FXCollections.observableArrayList();
 
             for (Account acc : nonAdmins) {
-                if (acc.getNamn().toLowerCase().contains(lower) ||
-                        acc.getEfternamn().toLowerCase().contains(lower) ||
-                        acc.getEpost().toLowerCase().contains(lower)) {
+                if (acc.getName().toLowerCase().contains(lower) ||
+                        acc.getLastname().toLowerCase().contains(lower) ||
+                        acc.getEmail().toLowerCase().contains(lower)) {
                     filtered.add(acc);
                 }
             }
@@ -145,7 +145,7 @@ public class AdminDashboard {
 
         dialog.showAndWait().ifPresent(selected -> {
             if (selected != null) {
-                boolean added = adminDAO.createAdmin(selected.getEpost());
+                boolean added = adminDAO.createAdmin(selected.getEmail());
                 showResult(added, "Admin tillagd", "Misslyckades lägga till admin.");
             } else {
                 showError("Du måste välja ett konto.");
@@ -166,7 +166,7 @@ public class AdminDashboard {
         dialog.getDialogPane().getButtonTypes().addAll(removeButtonType, ButtonType.CANCEL);
 
         ObservableList<Account> admins = adminDAO.getAllAdmins();
-        admins.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+        admins.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
 
         ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(admins));
         listView.setPrefHeight(250);
@@ -179,9 +179,9 @@ public class AdminDashboard {
             ObservableList<Account> filtered = FXCollections.observableArrayList();
 
             for (Account acc : admins) {
-                if (acc.getNamn().toLowerCase().contains(lower) ||
-                        acc.getEfternamn().toLowerCase().contains(lower) ||
-                        acc.getEpost().toLowerCase().contains(lower)) {
+                if (acc.getName().toLowerCase().contains(lower) ||
+                        acc.getLastname().toLowerCase().contains(lower) ||
+                        acc.getEmail().toLowerCase().contains(lower)) {
                     filtered.add(acc);
                 }
             }
@@ -202,7 +202,7 @@ public class AdminDashboard {
 
         dialog.showAndWait().ifPresent(selected -> {
             if (selected != null) {
-                boolean removed = adminDAO.removeAdmin(selected.getEpost());
+                boolean removed = adminDAO.removeAdmin(selected.getEmail());
                 showResult(removed, "Admin borttagen", "Kunde inte ta bort admin.");
             } else {
                 showError("Du måste välja en admin.");
@@ -220,8 +220,8 @@ public class AdminDashboard {
         ButtonType removeButtonType = new ButtonType("Ta bort", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(removeButtonType, ButtonType.CANCEL);
 
-        ObservableList<Account> allAccounts = accountDAO.getAllaKonton();
-        allAccounts.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+        ObservableList<Account> allAccounts = accountDAO.getAllAccounts();
+        allAccounts.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
 
         ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(allAccounts));
         listView.setPrefHeight(250);
@@ -234,9 +234,9 @@ public class AdminDashboard {
             ObservableList<Account> filtered = FXCollections.observableArrayList();
 
             for (Account acc : allAccounts) {
-                if (acc.getNamn().toLowerCase().contains(lower) ||
-                        acc.getEfternamn().toLowerCase().contains(lower) ||
-                        acc.getEpost().toLowerCase().contains(lower)) {
+                if (acc.getName().toLowerCase().contains(lower) ||
+                        acc.getLastname().toLowerCase().contains(lower) ||
+                        acc.getEmail().toLowerCase().contains(lower)) {
                     filtered.add(acc);
                 }
             }
@@ -257,7 +257,7 @@ public class AdminDashboard {
 
         dialog.showAndWait().ifPresent(selected -> {
             if (selected != null) {
-                boolean removed = accountDAO.raderaKonto(selected.getKontoID());
+                boolean removed = accountDAO.eraseAccount(selected.getAccountID());
                 showResult(removed, "Kontot togs bort", "Kunde inte radera kontot.");
             } else {
                 showError("Du måste välja ett konto.");
@@ -276,8 +276,8 @@ public class AdminDashboard {
         ButtonType resetButtonType = new ButtonType("Återställ", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(resetButtonType, ButtonType.CANCEL);
 
-        ObservableList<Account> allAccounts = accountDAO.getAllaKonton();
-        allAccounts.sort((a, b) -> a.getNamn().compareToIgnoreCase(b.getNamn()));
+        ObservableList<Account> allAccounts = accountDAO.getAllAccounts();
+        allAccounts.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
 
         ListView<Account> listView = new ListView<>(FXCollections.observableArrayList(allAccounts));
         listView.setPrefHeight(200);
@@ -293,9 +293,9 @@ public class AdminDashboard {
             ObservableList<Account> filtered = FXCollections.observableArrayList();
 
             for (Account acc : allAccounts) {
-                if (acc.getNamn().toLowerCase().contains(lower) ||
-                        acc.getEfternamn().toLowerCase().contains(lower) ||
-                        acc.getEpost().toLowerCase().contains(lower)) {
+                if (acc.getName().toLowerCase().contains(lower) ||
+                        acc.getLastname().toLowerCase().contains(lower) ||
+                        acc.getEmail().toLowerCase().contains(lower)) {
                     filtered.add(acc);
                 }
             }
@@ -327,8 +327,8 @@ public class AdminDashboard {
                 return;
             }
 
-            selected.setLösenord(newPassword);
-            boolean updated = accountDAO.uppdateraKonto(selected);
+            selected.setPassword(newPassword);
+            boolean updated = accountDAO.updateAccount(selected);
             showResult(updated, "Lösenord uppdaterat", "Kunde inte uppdatera lösenord.");
         });
     }
