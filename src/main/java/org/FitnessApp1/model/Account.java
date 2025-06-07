@@ -1,76 +1,76 @@
 package org.FitnessApp1.model;
 
 public class Account {
-    private int kontoID;
-    private String namn;
-    private String efternamn;
+    private int accountID;
+    private String name;
+    private String lastName;
     private String epost;
-    private String lösenord;
-    private int ålder;
-    private double vikt;
-    private String kön;
-    private int dagligtMal;
+    private String password;
+    private int age;
+    private double weight;
+    private String gender;
+    private int dailyGoal;
 
     // Tom konstruktor
     public Account() {}
 
     // Konstruktor för nyregistrering (utan ID)
-    public Account(String namn, String efternamn, String epost, String lösenord,
-                   int ålder, double vikt, String kön, int dagligtMal) {
-        this.namn = namn;
-        this.efternamn = efternamn;
+    public Account(String name, String lastName, String epost, String password,
+                   int age, double weight, String gender, int dailyGoal) {
+        this.name = name;
+        this.lastName = lastName;
         this.epost = epost;
-        this.lösenord = lösenord;
-        this.ålder = ålder;
-        this.vikt = vikt;
-        this.kön = kön;
-        this.dagligtMal = dagligtMal;
+        this.password = password;
+        this.age = age;
+        this.weight = weight;
+        this.gender = gender;
+        this.dailyGoal = dailyGoal;
     }
 
     // Fullständig konstruktor inkl. kontoID
-    public Account(int kontoID, String namn, String efternamn, String epost, String lösenord,
-                   int ålder, double vikt, String kön, int dagligtMal) {
-        this.kontoID = kontoID;
-        this.namn = namn;
-        this.efternamn = efternamn;
+    public Account(int accountID, String name, String lastName, String epost, String password,
+                   int age, double weight, String gender, int dailyGoal) {
+        this.accountID = accountID;
+        this.name = name;
+        this.lastName = lastName;
         this.epost = epost;
-        this.lösenord = lösenord;
-        this.ålder = ålder;
-        this.vikt = vikt;
-        this.kön = kön;
-        this.dagligtMal = dagligtMal;
+        this.password = password;
+        this.age = age;
+        this.weight = weight;
+        this.gender = gender;
+        this.dailyGoal = dailyGoal;
     }
 
     // Getters & Setters
-    public int getAccountID() { return kontoID; }
-    public void setAccountID(int kontoID) { this.kontoID = kontoID; }
+    public int getAccountID() { return accountID; }
+    public void setAccountID(int kontoID) { this.accountID = kontoID; }
 
-    public String getName() { return namn; }
-    public void setName(String namn) { this.namn = namn; }
+    public String getName() { return name; }
+    public void setName(String namn) { this.name = name; }
 
-    public String getLastname() { return efternamn; }
-    public void setLastname(String efternamn) { this.efternamn = efternamn; }
+    public String getLastname() { return lastName; }
+    public void setLastname(String efternamn) { this.lastName = lastName; }
 
     public String getEmail() { return epost; }
     public void setEmail(String epost) { this.epost = epost; }
 
-    public String getPassword() { return lösenord; }
-    public void setPassword(String lösenord) { this.lösenord = lösenord; }
+    public String getPassword() { return password; }
+    public void setPassword(String lösenord) { this.password = password; }
 
-    public int getAge() { return ålder; }
-    public void setAge(int ålder) { this.ålder = ålder; }
+    public int getAge() { return age; }
+    public void setAge(int ålder) { this.age = age; }
 
-    public double getWeight() { return vikt; }
-    public void setWeight(double vikt) { this.vikt = vikt; }
+    public double getWeight() { return weight; }
+    public void setWeight(double vikt) { this.weight = weight; }
 
-    public String getGender() { return kön; }
-    public void setGender(String kön) { this.kön = kön; }
+    public String getGender() { return gender; }
+    public void setGender(String kön) { this.gender = gender; }
 
-    public int getDaliyGoals() { return dagligtMal; }
-    public void setDailyGoals(int dagligtMal) { this.dagligtMal = dagligtMal; }
+    public int getDaliyGoals() { return dailyGoal; }
+    public void setDailyGoals(int dagligtMal) { this.dailyGoal = dailyGoal; }
 
     @Override
     public String toString() {
-        return namn + " " + efternamn + " (" + epost + ")";
+        return name + " " + lastName + " (" + epost + ")";
     }
 }
