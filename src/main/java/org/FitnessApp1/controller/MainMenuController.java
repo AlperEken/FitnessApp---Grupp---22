@@ -33,7 +33,7 @@ public class MainMenuController {
 
         view.getCalorieLogButton().setOnAction(e -> {
             CalorieLogScreen screen = new CalorieLogScreen();
-            Scene scene = new Scene(screen.getRoot(), 550, 750);
+            Scene scene = new Scene(screen.getRoot(), 750, 750);
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();// Använd faktisk storlek
             primaryStage.setResizable(false);  // Förhindra skeva ändringar
