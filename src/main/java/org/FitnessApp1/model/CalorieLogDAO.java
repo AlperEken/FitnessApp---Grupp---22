@@ -14,10 +14,10 @@ public class CalorieLogDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setDate(1, Date.valueOf(logg.getDatum()));
-            stmt.setInt(2, logg.getKalorier());
-            stmt.setInt(3, logg.getKontoID());
-            stmt.setString(4, logg.getBeskrivning());
+            stmt.setDate(1, Date.valueOf(logg.getDate()));
+            stmt.setInt(2, logg.getCalories());
+            stmt.setInt(3, logg.getAccountID());
+            stmt.setString(4, logg.getDescription());
 
             stmt.executeUpdate();
             return true;
@@ -118,10 +118,10 @@ public class CalorieLogDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setDate(1, Date.valueOf(logg.getDatum()));
-            stmt.setInt(2, logg.getKalorier());
-            stmt.setString(3, logg.getBeskrivning());
-            stmt.setInt(4, logg.getLoggID());
+            stmt.setDate(1, Date.valueOf(logg.getDate()));
+            stmt.setInt(2, logg.getCalories());
+            stmt.setString(3, logg.getDescription());
+            stmt.setInt(4, logg.getLogID());
 
             stmt.executeUpdate();
             return true;

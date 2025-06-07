@@ -42,22 +42,22 @@ public class MainMenuController {
         });
 
 
-        view.getLoggaUtButton().setOnAction(e -> {
+        view.getLogOutButton().setOnAction(e -> {
             Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
             confirmAlert.setTitle("Logga ut");
             confirmAlert.setHeaderText(null);
             confirmAlert.setContentText("Vill du logga ut?");
             confirmAlert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    SessionManager.clearAktivtKontoID();
+                    SessionManager.clearActiveAccountID();
                     System.out.println("Användare har loggats ut.");
-                    Main.visaStartScreen(primaryStage);
+                    Main.showStartScreen(primaryStage);
                 }
             });
         });
 
         view.getEditProfileButton().setOnAction(e -> {
-            int kontoID = SessionManager.getAktivtKontoID();
+            int kontoID = SessionManager.getActiveAccountID();
             AccountDAO accountDAO = new AccountDAO();
             Account account = accountDAO.getAccountByID(kontoID);
 
@@ -71,8 +71,8 @@ public class MainMenuController {
             }
         });
 
-        view.getKalenderButton().setOnAction(e -> {
-            int kontoID = SessionManager.getAktivtKontoID();
+        view.getCalenderButton().setOnAction(e -> {
+            int kontoID = SessionManager.getActiveAccountID();
             CalenderScreen calenderScreen = new CalenderScreen(kontoID);
             Scene scene = new Scene(calenderScreen.getRoot(), 800, 600);
             primaryStage.setScene(scene);

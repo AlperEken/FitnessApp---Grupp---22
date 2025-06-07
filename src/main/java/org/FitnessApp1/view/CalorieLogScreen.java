@@ -106,8 +106,8 @@ public class CalorieLogScreen {
         contextMenu.getItems().addAll(redigeraItem, taBortItem);
         loggLista.setContextMenu(contextMenu);
 
-        redigeraItem.setOnAction(e -> redigeraValdLogg());
-        taBortItem.setOnAction(e -> taBortValdLogg());
+        redigeraItem.setOnAction(e -> editLog());
+        taBortItem.setOnAction(e -> removeLog());
 
         // === Fält ===
         Label matLabel = new Label("Vad har du ätit?");
@@ -125,8 +125,8 @@ public class CalorieLogScreen {
         datumPicker = new DatePicker(LocalDate.now());
 
         datumPicker.valueProperty().addListener((obs, oldVal, newVal) -> {
-            uppdateraLoggLista();
-            uppdateraDagensSumma();
+            upodateLogList();
+            updateTodaysAmount();
         });
 
         // === Knapp ===
@@ -134,7 +134,7 @@ public class CalorieLogScreen {
         sparaButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6;");
         sparaButton.setOnMouseEntered(e -> sparaButton.setStyle("-fx-background-color: #0F2A5C; -fx-text-fill: white; -fx-background-radius: 6;"));
         sparaButton.setOnMouseExited(e -> sparaButton.setStyle("-fx-background-color: #1A3E8B; -fx-text-fill: white; -fx-background-radius: 6;"));
-        sparaButton.setOnAction(e -> sparaIntag());
+        sparaButton.setOnAction(e -> saveIntake());
 
         // === Progress ===
         kaloriProgressBar = new ProgressBar(0);
@@ -168,8 +168,8 @@ public class CalorieLogScreen {
 
         root.setCenter(container);
 
-        uppdateraLoggLista();
-        uppdateraDagensSumma();
+        upodateLogList();
+        updateTodaysAmount();
     }
 
     public Parent getRoot() {
@@ -177,12 +177,12 @@ public class CalorieLogScreen {
     }
 
     // === Logik-metoder ===
-    private void sparaIntag() {
+    private void saveIntake() {
         try {
             String mat = matField.getText();
             int kalorier = Integer.parseInt(kalorierField.getText());
             LocalDate datum = datumPicker.getValue();
-            int kontoID = SessionManager.getAktivtKontoID();
+            int kontoID = SessionManager.getActiveAccountID();
 
             if (kalorier > 10000) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -213,8 +213,8 @@ public class CalorieLogScreen {
 
             matField.clear();
             kalorierField.clear();
-            uppdateraDagensSumma();
-            uppdateraLoggLista();
+            updateTodaysAmount();
+            upodateLogList();
 
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -224,7 +224,7 @@ public class CalorieLogScreen {
         }
     }
 
-    private void redigeraValdLogg() {
+    private void editLog() {
         String selected = loggLista.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
@@ -243,13 +243,13 @@ public class CalorieLogScreen {
                 String nyBeskrivning = ny[0].trim();
                 int nyKalorier = Integer.parseInt(ny[1].trim());
 
-                int kontoID = SessionManager.getAktivtKontoID();
+                int kontoID = SessionManager.getActiveAccountID();
                 int loggID = loggTextTillID.get(selected);
                 CalorieLog logg = new CalorieLog(loggID, datumPicker.getValue(), nyBeskrivning, nyKalorier, kontoID);
                 new CalorieLogDAO().updateLogs(logg);
 
-                uppdateraDagensSumma();
-                uppdateraLoggLista();
+                updateTodaysAmount();
+                upodateLogList();
             } catch (Exception ex) {
                 Alert fel = new Alert(Alert.AlertType.ERROR);
                 fel.setContentText("Felaktigt format. Använd semikolon.");
@@ -258,7 +258,7 @@ public class CalorieLogScreen {
         });
     }
 
-    private void taBortValdLogg() {
+    private void removeLog() {
         String selected = loggLista.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
@@ -269,20 +269,20 @@ public class CalorieLogScreen {
             if (res == ButtonType.OK) {
                 int loggID = loggTextTillID.get(selected);
                 new CalorieLogDAO().deleteLog(loggID);
-                uppdateraDagensSumma();
-                uppdateraLoggLista();
+                updateTodaysAmount();
+                upodateLogList();
             }
         });
     }
 
-    private void uppdateraDagensSumma() {
-        int kontoID = SessionManager.getAktivtKontoID();
+    private void updateTodaysAmount() {
+        int kontoID = SessionManager.getActiveAccountID();
         if (kontoID == -1) return;
 
         LocalDate datum = datumPicker.getValue();
         int total = new CalorieLogDAO().countTotalCalories(datum, kontoID);
         Account account = new AccountDAO().getAccountByID(kontoID);
-        int dagligtMal = account.getDagligtMal();
+        int dagligtMal = account.getDaliyGoals();
 
         int kvar = dagligtMal - total;
         dagensSummaText.setText("Totalt: " + total + " kcal\nKvar till mål: " + kvar + " kcal");
@@ -293,19 +293,19 @@ public class CalorieLogScreen {
         procentText.setText(procent + "%");
     }
 
-    private void uppdateraLoggLista() {
+    private void upodateLogList() {
         loggLista.getItems().clear();
         loggTextTillID.clear();
 
-        int kontoID = SessionManager.getAktivtKontoID();
+        int kontoID = SessionManager.getActiveAccountID();
         if (kontoID == -1) return;
 
         List<CalorieLog> loggar = new CalorieLogDAO().getLogsForDate(datumPicker.getValue(), kontoID);
 
         for (CalorieLog logg : loggar) {
-            String text = logg.getBeskrivning() + " (" + logg.getKalorier() + " kcal)";
+            String text = logg.getDescription() + " (" + logg.getCalories() + " kcal)";
             loggLista.getItems().add(text);
-            loggTextTillID.put(text, logg.getLoggID());
+            loggTextTillID.put(text, logg.getLogID());
 
             FadeTransition ft = new FadeTransition(Duration.millis(300), loggLista);
             ft.setFromValue(0);

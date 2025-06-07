@@ -23,43 +23,43 @@ public class CalorieLog {
     }
 
     // Getters & setters
-    public int getLoggID() {
+    public int getLogID() {
         return loggID;
     }
 
-    public void setLoggID(int loggID) {
+    public void setLogID(int loggID) {
         this.loggID = loggID;
     }
 
-    public LocalDate getDatum() {
+    public LocalDate getDate() {
         return datum;
     }
 
-    public void setDatum(LocalDate datum) {
+    public void setDate(LocalDate datum) {
         this.datum = datum;
     }
 
-    public String getBeskrivning() {
+    public String getDescription() {
         return beskrivning;
     }
 
-    public void setBeskrivning(String beskrivning) {
+    public void setDescription(String beskrivning) {
         this.beskrivning = beskrivning;
     }
 
-    public int getKalorier() {
+    public int getCalories() {
         return kalorier;
     }
 
-    public void setKalorier(int kalorier) {
+    public void setCalories(int kalorier) {
         this.kalorier = kalorier;
     }
 
-    public int getKontoID() {
+    public int getAccountID() {
         return kontoID;
     }
 
-    public void setKontoID(int kontoID) {
+    public void setAccountID(int kontoID) {
         this.kontoID = kontoID;
     }
 

@@ -79,25 +79,25 @@ public class EditProfileScreen {
         header.getChildren().addAll(homeIcon, titleBox);
 
         // === Fält med placeholders ===
-        nameField = new TextField(account.getNamn());
+        nameField = new TextField(account.getName());
         nameField.setPromptText("Exempel: Anna");
 
-        efternameField = new TextField(account.getEfternamn());
+        efternameField = new TextField(account.getLastname());
         efternameField.setPromptText("Exempel: Svensson");
 
-        emailField = new TextField(account.getEpost());
+        emailField = new TextField(account.getEmail());
         emailField.setPromptText("Exempel: anna@mail.com");
 
         passwordField = new PasswordField();
         passwordField.setPromptText("Lämna tomt om du inte vill ändra");
 
-        weightField = new TextField(String.valueOf(account.getVikt()));
+        weightField = new TextField(String.valueOf(account.getWeight()));
         weightField.setPromptText("Exempel: 70");
 
-        genderField = new TextField(account.getKön());
+        genderField = new TextField(account.getGender());
         genderField.setPromptText("Exempel: Kvinna");
 
-        goalField = new TextField(String.valueOf(account.getDagligtMal()));
+        goalField = new TextField(String.valueOf(account.getDaliyGoals()));
         goalField.setPromptText("Exempel: 2000");
 
         // === Knappar ===
@@ -114,43 +114,20 @@ public class EditProfileScreen {
 
         // === Lägg till alla fält ===
         layout.getChildren().addAll(
-                skapaFältLabel("Förnamn:"), nameField,
-                skapaFältLabel("Efternamn:"), efternameField,
-                skapaFältLabel("E-post:"), emailField,
-                skapaFältLabel("Lösenord:"), passwordField,
-                skapaFältLabel("Vikt (kg):"), weightField,
-                skapaFältLabel("Kön:"), genderField,
-                skapaFältLabel("Dagligt mål (kalorier):"), goalField,
+                createFieldLabel("Förnamn:"), nameField,
+                createFieldLabel("Efternamn:"), efternameField,
+                createFieldLabel("E-post:"), emailField,
+                createFieldLabel("Lösenord:"), passwordField,
+                createFieldLabel("Vikt (kg):"), weightField,
+                createFieldLabel("Kön:"), genderField,
+                createFieldLabel("Dagligt mål (kalorier):"), goalField,
                 saveButton,
                 deleteButton
         );
 
-        saveButton.setOnAction(e -> sparaÄndringar());
-        deleteButton.setOnAction(e -> raderaKonto());
+        saveButton.setOnAction(e -> saveChanges());
+        deleteButton.setOnAction(e -> eraseAccount());
 
-//        // === Scrollpane ===
-//        ScrollPane scrollPane = new ScrollPane(layout);
-//        scrollPane.setFitToWidth(true);
-//        scrollPane.setStyle("""
-//    -fx-background-color: transparent;
-//    -fx-background-insets: 0;
-//    -fx-padding: 0;
-//    -fx-background-radius: 12;
-//""");
-//        scrollPane.setPadding(new Insets(10));
-//
-//        VBox centeredCard = new VBox(scrollPane);
-//        centeredCard.setAlignment(Pos.CENTER);
-//        centeredCard.setPadding(new Insets(20));
-//        centeredCard.setPrefHeight(Region.USE_COMPUTED_SIZE);
-//        centeredCard.setStyle("""
-//    -fx-background-color: transparent;
-//    -fx-background-radius: 12;
-//""");
-//
-//
-//        root.setTop(header);
-//        root.setCenter(centeredCard);
 
         VBox centeredCard = new VBox(layout);
         centeredCard.setAlignment(Pos.CENTER);
@@ -162,14 +139,14 @@ public class EditProfileScreen {
 
     }
 
-    private Label skapaFältLabel(String text) {
+    private Label createFieldLabel(String text) {
         Label label = new Label(text);
         label.setStyle("-fx-text-fill: black;");
         label.setFont(Font.font("Arial", FontWeight.BOLD, 12));
         return label;
     }
 
-    private void sparaÄndringar() {
+    private void saveChanges() {
         try {
             String nyttNamn = nameField.getText();
             String nyttEfternamn = efternameField.getText();
@@ -179,21 +156,21 @@ public class EditProfileScreen {
             String nyttKön = genderField.getText();
             int nyttMål = Integer.parseInt(goalField.getText());
 
-            String lösenAttSpara = nyttLösen.isEmpty() ? originalAccount.getLösenord() : nyttLösen;
+            String lösenAttSpara = nyttLösen.isEmpty() ? originalAccount.getPassword() : nyttLösen;
 
             Account uppdateratAccount = new Account(
-                    originalAccount.getKontoID(),
+                    originalAccount.getAccountID(),
                     nyttNamn,
                     nyttEfternamn,
                     nyttEpost,
                     lösenAttSpara,
-                    originalAccount.getÅlder(),
+                    originalAccount.getAge(),
                     nyVikt,
                     nyttKön,
                     nyttMål
             );
 
-            boolean lyckades = new AccountDAO().uppdateraKonto(uppdateratAccount);
+            boolean lyckades = new AccountDAO().updateAccount(uppdateratAccount);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Profiluppdatering");
@@ -216,23 +193,23 @@ public class EditProfileScreen {
         }
     }
 
-    private void raderaKonto() {
+    private void eraseAccount() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Bekräftelse");
         confirm.setHeaderText("Är du säker?");
         confirm.setContentText("Detta kommer att permanent ta bort ditt konto.");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                boolean raderat = new AccountDAO().raderaKonto(originalAccount.getKontoID());
+                boolean raderat = new AccountDAO().eraseAccount(originalAccount.getAccountID());
                 Alert resultat = new Alert(Alert.AlertType.INFORMATION);
                 resultat.setHeaderText(null);
                 resultat.setContentText(raderat ? "Konto har raderats." : "Kunde inte radera konto.");
                 resultat.showAndWait();
 
                 if (raderat) {
-                    SessionManager.clearAktivtKontoID();
+                    SessionManager.clearActiveAccountID();
                     SessionManager.setUsername(null);
-                    Main.visaStartScreen(primaryStage);
+                    Main.showStartScreen(primaryStage);
                 }
             }
         });
@@ -242,10 +219,4 @@ public class EditProfileScreen {
         return root;
     }
 
-    public void visaFönster() {
-        Scene scene = new Scene(getRoot(), 800, 600);
-        primaryStage.setTitle("Redigera Profil");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
 }

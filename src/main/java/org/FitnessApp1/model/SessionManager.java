@@ -6,12 +6,12 @@ public class SessionManager {
     private static String username = ""; // Lägger till en variabel för användarnamnet
 
     // Hämta aktivt konto-ID
-    public static int getAktivtKontoID() {
+    public static int getActiveAccountID() {
         return aktivtKontoID;
     }
 
     // Sätt aktivt konto-ID
-    public static void setAktivtKontoID(int kontoID) {
+    public static void setActiveAccountID(int kontoID) {
         aktivtKontoID = kontoID;
     }
 
@@ -26,7 +26,7 @@ public class SessionManager {
     }
 
     // Rensa aktivt konto-ID (logga ut användaren)
-    public static void clearAktivtKontoID() {
+    public static void clearActiveAccountID() {
         aktivtKontoID = -1; // Återställ till en ogiltig ID, vilket innebär att ingen är inloggad
         username = ""; // Rensa användarnamn vid utloggning
     }

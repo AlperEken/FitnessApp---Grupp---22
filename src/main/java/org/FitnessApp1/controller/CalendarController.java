@@ -40,42 +40,42 @@ public class CalendarController {
         return datesWithNotes;
     }
 
-    // Show dialog to add or update note for a date with kontoid
-    public static void visaAnteckningsDialog(LocalDate datum, int kontoid) {
-        String existingNote = calendarDAO.getNoteForDate(datum, kontoid);
-        TextInputDialog dialog = new TextInputDialog(existingNote != null ? existingNote : "");
-        dialog.setTitle("Anteckning för " + datum);
-        dialog.setHeaderText(null);
-        dialog.setContentText("Skriv anteckning:");
-
-        Optional<String> resultat = dialog.showAndWait();
-        resultat.ifPresent(text -> {
-            if (!text.trim().isEmpty()) {
-                calendarDAO.saveOrUpdate(datum, kontoid, text.trim());
-            }
-        });
-    }
-
-    // Show existing note in dialog (read-only) with kontoid
-    public static void visaBefintligAnteckning(LocalDate datum, int kontoid) {
-        String note = calendarDAO.getNoteForDate(datum, kontoid);
-        if (note == null || note.isEmpty()) {
-            System.out.println("Ingen anteckning för datumet: " + datum);
-            return;
-        }
-        TextInputDialog dialog = new TextInputDialog(note);
-        dialog.setTitle("Visa anteckning för " + datum);
-        dialog.setHeaderText(null);
-        dialog.setContentText("Anteckning:");
-        dialog.getEditor().setEditable(false);
-        dialog.showAndWait();
-    }
-
-    // Delete note for date with kontoid
-    public static void taBortAnteckning(LocalDate datum, int kontoid) {
-        boolean success = calendarDAO.deleteNote(datum, kontoid);
-        if (!success) {
-            System.err.println("Kunde inte ta bort anteckning för datum: " + datum);
-        }
-    }
+//    // Show dialog to add or update note for a date with kontoid
+//    public static void visaAnteckningsDialog(LocalDate datum, int kontoid) {
+//        String existingNote = calendarDAO.getNoteForDate(datum, kontoid);
+//        TextInputDialog dialog = new TextInputDialog(existingNote != null ? existingNote : "");
+//        dialog.setTitle("Anteckning för " + datum);
+//        dialog.setHeaderText(null);
+//        dialog.setContentText("Skriv anteckning:");
+//
+//        Optional<String> resultat = dialog.showAndWait();
+//        resultat.ifPresent(text -> {
+//            if (!text.trim().isEmpty()) {
+//                calendarDAO.saveOrUpdate(datum, kontoid, text.trim());
+//            }
+//        });
+//    }
+//
+//    // Show existing note in dialog (read-only) with kontoid
+//    public static void visaBefintligAnteckning(LocalDate datum, int kontoid) {
+//        String note = calendarDAO.getNoteForDate(datum, kontoid);
+//        if (note == null || note.isEmpty()) {
+//            System.out.println("Ingen anteckning för datumet: " + datum);
+//            return;
+//        }
+//        TextInputDialog dialog = new TextInputDialog(note);
+//        dialog.setTitle("Visa anteckning för " + datum);
+//        dialog.setHeaderText(null);
+//        dialog.setContentText("Anteckning:");
+//        dialog.getEditor().setEditable(false);
+//        dialog.showAndWait();
+//    }
+//
+//    // Delete note for date with kontoid
+//    public static void taBortAnteckning(LocalDate datum, int kontoid) {
+//        boolean success = calendarDAO.deleteNote(datum, kontoid);
+//        if (!success) {
+//            System.err.println("Kunde inte ta bort anteckning för datum: " + datum);
+//        }
+//    }
 }

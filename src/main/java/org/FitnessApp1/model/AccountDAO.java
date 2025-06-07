@@ -85,7 +85,7 @@ public class AccountDAO {
     }
 
     // Validera inloggning genom att jämföra e-post och lösenord
-    public boolean valideraInloggning(String epost, String losenord) {
+    public boolean validateLogIn(String epost, String losenord) {
         String sql = "SELECT lösenord FROM konto WHERE epost = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -108,29 +108,29 @@ public class AccountDAO {
 
 
 
-    public boolean registeraccount(Account account) {
+    public boolean registerAccount(Account account) {
         String sql = "INSERT INTO konto (namn, efternamn, epost, lösenord, ålder, vikt, kön, dagligtMål) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING kontoID";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            String hashedPassword = BCrypt.hashpw(account.getLösenord(), BCrypt.gensalt());
+            String hashedPassword = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt());
 
-            stmt.setString(1, account.getNamn());
-            stmt.setString(2, account.getEfternamn());
-            stmt.setString(3, account.getEpost());
+            stmt.setString(1, account.getName());
+            stmt.setString(2, account.getLastname());
+            stmt.setString(3, account.getEmail());
             stmt.setString(4, hashedPassword);
-            stmt.setInt(5, account.getÅlder());
-            stmt.setDouble(6, account.getVikt());
-            stmt.setString(7, account.getKön());
-            stmt.setInt(8, account.getDagligtMal());
+            stmt.setInt(5, account.getAge());
+            stmt.setDouble(6, account.getWeight());
+            stmt.setString(7, account.getGender());
+            stmt.setInt(8, account.getDaliyGoals());
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 int kontoID = rs.getInt("kontoID");
 
                 // Skapa kalender och koppla till kontoID
-                int kalenderID = skapaNyKalender(kontoID);
+                int kalenderID = createNewCalender(kontoID);
                 if (kalenderID == -1) {
                     System.err.println("Misslyckades skapa kalender");
                     return false;
@@ -148,27 +148,27 @@ public class AccountDAO {
 
 
     // Uppdatera konto (exempel: användare ändrar sina uppgifter)
-    public boolean uppdateraKonto(Account account) {
+    public boolean updateAccount(Account account) {
         String sql = "UPDATE konto SET namn = ?, efternamn = ?, epost = ?, lösenord = ?, ålder = ?, vikt = ?, kön = ?, dagligtMål = ? WHERE kontoID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            String lösenord = account.getLösenord();
+            String lösenord = account.getPassword();
             // Hasha endast om lösenordet INTE är hashat redan
             if (!lösenord.startsWith("$2a$") && !lösenord.startsWith("$2b$")) {
                 lösenord = BCrypt.hashpw(lösenord, BCrypt.gensalt());
             }
 
-            stmt.setString(1, account.getNamn());
-            stmt.setString(2, account.getEfternamn());
-            stmt.setString(3, account.getEpost());
+            stmt.setString(1, account.getName());
+            stmt.setString(2, account.getLastname());
+            stmt.setString(3, account.getEmail());
             stmt.setString(4, lösenord);
-            stmt.setInt(5, account.getÅlder());
-            stmt.setDouble(6, account.getVikt());
-            stmt.setString(7, account.getKön());
-            stmt.setInt(8, account.getDagligtMal());
-            stmt.setInt(9, account.getKontoID());
+            stmt.setInt(5, account.getAge());
+            stmt.setDouble(6, account.getWeight());
+            stmt.setString(7, account.getGender());
+            stmt.setInt(8, account.getDaliyGoals());
+            stmt.setInt(9, account.getAccountID());
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -180,7 +180,7 @@ public class AccountDAO {
         return false;
     }
 
-    public boolean raderaKonto(int kontoID) {
+    public boolean eraseAccount(int kontoID) {
         String sql = "DELETE FROM konto WHERE kontoID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -197,7 +197,7 @@ public class AccountDAO {
     }
 
 
-    public int skapaNyKalender(int kontoID) {
+    public int createNewCalender(int kontoID) {
         String sql = "INSERT INTO kalender (kontoID) VALUES (?) RETURNING kalenderid";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -235,7 +235,7 @@ public class AccountDAO {
         return -1; // Fel eller ej hittad
     }
 
-    public ObservableList<Account> getAllaKonton() {
+    public ObservableList<Account> getAllAccounts() {
         ObservableList<Account> lista = FXCollections.observableArrayList();
         String sql = "SELECT * FROM konto";
 
