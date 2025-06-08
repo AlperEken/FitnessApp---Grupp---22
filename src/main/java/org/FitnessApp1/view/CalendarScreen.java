@@ -19,7 +19,7 @@ import org.FitnessApp1.model.SessionManager;
 
 import java.time.LocalDate;
 
-public class CalenderScreen {
+public class CalendarScreen {
 
     private final CalendarView calendarView;
     private final CalendarDAO calendarDAO;
@@ -27,7 +27,7 @@ public class CalenderScreen {
     private final int kontoid;
     private VBox root;
 
-    public CalenderScreen(int kontoid) {
+    public CalendarScreen(int kontoid) {
         this.kontoid = kontoid;
         this.calendarDAO = new CalendarDAO();
 

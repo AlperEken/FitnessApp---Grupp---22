@@ -73,8 +73,8 @@ public class MainMenuController {
 
         view.getCalenderButton().setOnAction(e -> {
             int kontoID = SessionManager.getActiveAccountID();
-            CalenderScreen calenderScreen = new CalenderScreen(kontoID);
-            Scene scene = new Scene(calenderScreen.getRoot(), 800, 600);
+            CalendarScreen calendarScreen = new CalendarScreen(kontoID);
+            Scene scene = new Scene(calendarScreen.getRoot(), 800, 600);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Kalender");
         });
